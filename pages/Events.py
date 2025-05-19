@@ -132,6 +132,7 @@ if st.session_state.active_tab == 'summary' and comp_id:
             filtered_df = player_df[player_df['Maps'] > p90]
 
             if 'Rating' in filtered_df.columns:
+                filtered_df = filtered_df.copy()
                 filtered_df['Rating'] = pd.to_numeric(filtered_df['Rating'], errors='coerce')
                 top_players_df = filtered_df.sort_values(by='Rating', ascending=False).head(10)
             else:

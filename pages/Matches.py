@@ -77,6 +77,12 @@ TAB_CONFIGS = {
     "rounds": {"label": "Rounds"},
 }
 
+status_styles = {
+    "pick": (":green[Picked]", "Picked"),
+    "drop": (":red[Dropped]", "Dropped"),
+    "left": (":orange[Left Over]", "Left Over")
+}
+
 st.title("Match Data")
 
 current_page = "Matches"
@@ -252,6 +258,7 @@ if active == "box-stats" and match_id:
 
         if match_data:
             score_info = match_data.get("score", [])
+            veto_info  = match_data.get("vetos", [])
             final_score = next((item for item in score_info if item.get("finish")), {})
 
             team_a_name = final_score.get("team_a_name", "")
@@ -324,6 +331,23 @@ if active == "box-stats" and match_id:
                 val = df_team_b_full.loc[selected_row_index, "Steam ID"]
                 st.session_state.current_steam_id = val
                 st.switch_page("pages/Player.py")
+            
+            ### - Handle vetos
+
+            lines = []
+            for item in sorted(veto_info, key=lambda x: x["round"]):
+                team = team_a_name if item["team_letter"] == "a" else team_b_name
+                map_name = item["map"].replace("de_", "").capitalize()
+                color_label = status_styles.get(item["status"], (f":gray[{item['status'].capitalize()}]", item["status"].capitalize()))[0]
+                lines.append(f"{team} {color_label} {map_name}")
+
+            output = "\n\n".join(lines)
+
+
+            st.divider()
+            st.subheader("Match Vetos")
+
+            st.markdown(output)
 
         else:
             st.info("ℹ️ No match data could be loaded")
