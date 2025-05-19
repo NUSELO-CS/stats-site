@@ -1,9 +1,7 @@
 import streamlit as st
 import pandas as pd
-from api import get_match_data, get_player_stats
+from api import get_match_data, get_player_stats, get_player_info
 from visualizations import create_avg_rating_chart, create_comparison_chart
-
-st.title("Player Stats Viewer")
 
 current_page = "Player"
 
@@ -11,18 +9,26 @@ current_page = "Player"
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "matches"
 
+def grab_player_info():
+    if st.session_state.api_key and st.session_state.current_steam_id and st.session_state.active_tab == "matches":
+        player_response = get_player_info(st.session_state.current_steam_id, st.session_state.api_key)
+        player_name = player_response.get("player_name", "Player") if player_response else "Player"
+        player_comp_data = player_response.get("comps", []) if player_response else []
+        st.session_state.player_name = player_name
+        st.session_state.player_comp_data = player_comp_data
+
 # Track last loaded page
 if st.session_state.get("last_page") != current_page:
     st.session_state.active_tab = "matches"  # reset on page load
     st.session_state.last_page = current_page  # update tracker
     st.session_state.matches = []
     st.session_state.offset = 0
+    st.session_state.player_name = ""
     st.session_state.end_of_data = False
+    if st.session_state.current_steam_id:
+        grab_player_info()
+    
     st.rerun()
-
-# --- INPUT ---
-# Text input for Steam ID
-steam_id = st.text_input("🔍 Enter your Steam ID:", value=st.session_state.current_steam_id)
 
 # Function to reset session state on steam id update
 def update_steam_id():
@@ -31,7 +37,18 @@ def update_steam_id():
         st.session_state.offset = 0
         st.session_state.end_of_data = False
         st.session_state.current_steam_id = steam_id  # Save the newer Steam ID
+        st.session_state.player_name = ""
+        grab_player_info()
         st.rerun()  # Force rerun
+
+
+player_name = st.session_state.get("player_name", "Player")
+st.title(f"{player_name} Stats")
+
+
+# --- INPUT ---
+# Text input for Steam ID
+steam_id = st.text_input("🔍 Enter your Steam ID:", value=st.session_state.current_steam_id)
 
 # Trigger the function when the Steam ID is different
 if steam_id and steam_id != st.session_state.current_steam_id:
@@ -53,6 +70,7 @@ if steam_id and not st.session_state.api_key:
 if st.session_state.active_tab == 'matches' and steam_id:
     try:
         new_matches = get_match_data(steam_id, st.session_state.api_key, offset=st.session_state.offset)
+        grab_player_info()
         
         if new_matches is None:
             st.toast("⚠️ Failed to load match data.")
@@ -95,7 +113,7 @@ if st.session_state.active_tab == 'matches' and steam_id:
             display_columns = ['Date', 'Score', 'Map', 'Team', 'Opponent', 'Rating', 'Kills', 'Assists', 'Deaths', 'K/D', 'KAST%', 'ADR', 'HS%', 'Event']
             for col in display_columns:
                 if col not in df.columns:
-                    df[col] = None  # blank define if no column data in api response
+                    df[col] = None 
 
             # Identify numeric columns to provide a consistent number of decimal places.
             numeric_columns = ['Rating', 'K/D', 'ADR', 'KAST%', 'HS%']
@@ -120,6 +138,8 @@ if st.session_state.active_tab == 'matches' and steam_id:
                 if st.session_state.offset > 0 and col1.button("Previous Page"):
                     st.session_state.offset -= 20
                     st.session_state.matches = []
+                    if st.session_state.offset == 0:
+                        st.session_state.end_of_data = False
                     st.rerun()
 
             with col2:
@@ -127,15 +147,51 @@ if st.session_state.active_tab == 'matches' and steam_id:
                     st.session_state.offset += 20
                     st.session_state.matches = []
                     st.rerun()
+            
+            # --- Events --- 
+            st.subheader("Comps")
+            if st.session_state.player_comp_data:
+                comp_values = st.session_state.player_comp_data
+                comp_df = pd.DataFrame(comp_values)
+
+                # Format date
+                comp_df['Date'] = pd.to_datetime(comp_df['last_match'].astype(int), unit='s').dt.date
+
+                comp_df.rename(columns={
+                'comp_id': 'Comp ID',
+                'comp_name': 'Event',
+                'team': 'Team',
+                'maps': 'Maps',
+                'rating': 'Rating',
+                'kills': 'Kills',
+                'deaths': 'Deaths',
+                'kd_diff': 'K-D',
+                'kast': 'KAST%',
+                'adr': 'ADR'
+                }, inplace=True)
+
+                comp_columns = ['Date','Event', 'Team', 'Maps', 'Rating','Kills','Deaths','K-D','KAST%','ADR']
+                for col in comp_columns:
+                    if col not in comp_df.columns:
+                        comp_df[col] = None 
+                comp_df = comp_df.applymap(str)
+
+                comp_clicker = st.dataframe(comp_df[comp_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+
+                if comp_clicker.selection and comp_clicker.selection.rows:
+                    comp_row_index = comp_clicker.selection.rows[0]
+                    comp_val = comp_df.loc[comp_row_index, "Comp ID"]
+                    st.session_state.selected_comp_id = comp_val
+                    st.switch_page("pages/Events.py")
 
             # --- Chart ---
             avg_rating_chart = create_avg_rating_chart(df)
             st.altair_chart(avg_rating_chart, use_container_width=True)
         else:
-            st.info("ℹ️ No match data loaded yet.")
+            st.info("ℹ️ No comp data loaded yet.")
     
     except Exception as e:
-        st.error("⚠️ An unexpected error occurred while loading match data.")
+        st.error("⚠️ An unexpected error occurred while loading comp data.")
 
 elif st.session_state.active_tab == 'stats':
     stats = get_player_stats(steam_id, st.session_state.api_key)

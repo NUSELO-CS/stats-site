@@ -281,22 +281,27 @@ if active == "box-stats" and match_id:
                     }
                     players_data.append(formatted_data)
 
-                df_full = pd.DataFrame(players_data).sort_values(by="Rating", ascending=False)
-                df_display = df_full.drop(columns=["Steam ID"])
-                return df_full, df_display
+                df_full = pd.DataFrame(players_data).sort_values(by="Rating", ascending=False).reset_index(drop=True)
 
-            df_team_a_full, df_team_a_display = build_team_df(team_a_data)
-            df_team_b_full, df_team_b_display = build_team_df(team_b_data)
+                match_columns = ['Player', 'Rating', 'ADR', 'KAST%', 'Kills', 'Assists', 'Deaths', 'K-D', 'KDR', 'HS%']
+                for col in match_columns:
+                    if col not in df_full.columns:
+                        df_full[col] = None 
+
+                return df_full, match_columns
+
+            df_team_a_full, df_team_a_columns = build_team_df(team_a_data)
+            df_team_b_full, df_team_b_columns = build_team_df(team_b_data)
 
             team_a_score_md = extract_score_data(score_info, 'a')
-            score1, score2 = st.columns(2)
+            score1, score2 = st.columns([3,1])
             with score1:
                 st.markdown(f"### {team_a_name} - {team_a_score}")
             with score2:
-                with st.expander(f"{team_a_name} Scores"):
+                with st.popover(f"{team_a_name} Scores",use_container_width=True):
                     st.markdown(team_a_score_md)
 
-            team1 = st.dataframe(df_team_a_display, use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+            team1 = st.dataframe(df_team_a_full[df_team_a_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
 
             if team1.selection and team1.selection.rows:
                 selected_row_index = team1.selection.rows[0]
@@ -305,14 +310,14 @@ if active == "box-stats" and match_id:
                 st.switch_page("pages/Player.py")
 
             team_b_score_md = extract_score_data(score_info, 'b')
-            score3, score4 = st.columns(2)
+            score3, score4 = st.columns([3,1])
             with score3:
                 st.markdown(f"### {team_b_name} - {team_b_score}")
             with score4:
-                with st.expander(f"{team_b_name} Scores"):
+                with st.popover(f"{team_b_name} Scores",use_container_width=True):
                     st.markdown(team_b_score_md)
 
-            team2 = st.dataframe(df_team_b_display, use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+            team2 = st.dataframe(df_team_b_full[df_team_b_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
 
             if team2.selection and team2.selection.rows:
                 selected_row_index = team2.selection.rows[0]

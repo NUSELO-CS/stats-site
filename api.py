@@ -39,3 +39,12 @@ def get_player_stats(steam_id: str, api_key: str):
 
 def get_match_info(match_id: str, api_key: str):
     return _api_get(f"/v2/data/matches/{match_id}", api_key)
+
+def get_player_info(steam_id: str, api_key: str):
+    params = {
+        "steam_id": steam_id
+    }
+    return _api_get("/v2/data/players/info", api_key, params)
+
+def get_event_details(event_id: str, api_key: str):
+    return _api_get(f"/v2/data/comps/{event_id}", api_key)

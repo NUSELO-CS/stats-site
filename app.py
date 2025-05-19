@@ -23,6 +23,7 @@ events_page = st.Page("pages/Events.py", title="Events", icon=":material/trophy:
 player_page = st.Page("pages/Player.py", title="Player Data", icon=":material/person:")
 home_page = st.Page("pages/Home.py", title="Home", icon=":material/home:")
 matches_page = st.Page("pages/Matches.py", title="Matches", icon=":material/tv:")
+rankings_page = st.Page("pages/Rankings.py", title="Rankings", icon=":material/language_gb_english:")
 
 pages = {
     "Landing": [
@@ -33,6 +34,9 @@ pages = {
         events_page,
         matches_page
     ],
+    "UKCS": [
+        rankings_page
+    ]
 }
 
 pg = st.navigation(pages, expanded=False)
@@ -48,7 +52,10 @@ for key, default in {
     'selected_match_id': "", # holding match id value for usage in player stats section, incorp event
     'current_page': "",
     'last_page': "",
-    'match_data': None
+    'match_data': None,
+    'player_name': "",
+    'comp_data': {}, # check prev clash
+    'selected_comp_id': ""
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
