@@ -17,11 +17,11 @@ st.markdown(
 )
 
 
-st.link_button("Join the NUSELO Discord by clicking here", "https://discord.nuselo.uk/", help=None, type="primary")
+st.link_button("Support can be reached in the NUSELO Discord. Join by clicking here", "https://discord.nuselo.uk/", help=None, type="primary")
 
 st.markdown(
         """
-        You can supply your API key via the sidebar, it is recommended you save this API key to your password manager while this approach is used.
+        API Keys are no longer required, you only need to login via your discord. Head to the Profile section on the sidebar
     """
 )
 
