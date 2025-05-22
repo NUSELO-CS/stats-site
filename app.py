@@ -12,20 +12,18 @@ st.set_page_config(
 
 st.logo("public/favicon.png")
 
-# --- API Key Section (shared across pages) ---
-with st.sidebar.expander("🔐 API Key Settings", expanded=False):
-    api_key_input = st.text_input("Enter API Key", type="password", value=st.session_state.get("api_key", ""))
-    if st.button("Submit API Key"):
-        st.session_state.api_key = api_key_input
-        st.toast("API Key saved!", icon="🔐")
+if st.user.is_logged_in:
+    st.session_state["api_key"] = st.user["https://nuselo.uk//api_token"]
 
 events_page = st.Page("pages/Events.py", title="Events", icon=":material/trophy:")
 player_page = st.Page("pages/Player.py", title="Player Data", icon=":material/person:")
 home_page = st.Page("pages/Home.py", title="Home", icon=":material/home:")
 matches_page = st.Page("pages/Matches.py", title="Matches", icon=":material/tv:")
 rankings_page = st.Page("pages/Rankings.py", title="Rankings", icon=":material/language_gb_english:")
+profile_page = st.Page("pages/User.py", title="Profile", icon=":material/person:")
 
-pages = {
+if st.user.is_logged_in:
+    pages = {
     "Landing": [
         home_page
     ],
@@ -36,8 +34,20 @@ pages = {
     ],
     "UKCS": [
         rankings_page
-    ]
-}
+    ],
+    "User": [
+        profile_page
+    ],
+    }
+else:
+    pages = {
+    "Landing": [
+        home_page
+    ],
+    "User": [
+        profile_page
+    ],
+    }
 
 pg = st.navigation(pages, expanded=False)
 
@@ -59,5 +69,6 @@ for key, default in {
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
+
 
 pg.run()
