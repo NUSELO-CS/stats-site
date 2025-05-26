@@ -13,6 +13,26 @@ st.set_page_config(
 
 st.logo("public/favicon.png")
 
+# --- SESSION STATE INIT ---
+for key, default in {
+    'api_key': "",
+    'offset': 0,
+    'matches': [],
+    'end_of_data': False,
+    'current_steam_id': "", # holding steam id value for usage in player stats section, incorp event
+    'active_tab': 'matches',
+    'selected_match_id': "", # holding match id value for usage in player stats section, incorp event
+    'current_page': "",
+    'last_page': "",
+    'match_data': None,
+    'player_name': "",
+    'comp_data': {},
+    'selected_comp_id': "",
+    "user_steam_id": None
+}.items():
+    if key not in st.session_state:
+        st.session_state[key] = default
+
 if st.user.is_logged_in:
     st.session_state["api_key"] = st.user["https://nuselo.uk//api_token"]
     discord_sub = st.user.get("sub", "")
@@ -58,26 +78,6 @@ else:
     }
 
 pg = st.navigation(pages, expanded=False)
-
-# --- SESSION STATE INIT ---
-for key, default in {
-    'api_key': "",
-    'offset': 0,
-    'matches': [],
-    'end_of_data': False,
-    'current_steam_id': "", # holding steam id value for usage in player stats section, incorp event
-    'active_tab': 'matches',
-    'selected_match_id': "", # holding match id value for usage in player stats section, incorp event
-    'current_page': "",
-    'last_page': "",
-    'match_data': None,
-    'player_name': "",
-    'comp_data': {},
-    'selected_comp_id': "",
-    "user_steam_id": None
-}.items():
-    if key not in st.session_state:
-        st.session_state[key] = default
 
 
 pg.run()
