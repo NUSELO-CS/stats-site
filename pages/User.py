@@ -70,7 +70,7 @@ with st.container(border=True):
             if st.button("Log in", use_container_width=True):
                 st.login("provider") 
 
-if st.user.is_logged_in and st.session_state:
+if st.user.is_logged_in and st.session_state.user_steam_id:
     try:
         new_matches = get_match_data(st.session_state.user_steam_id, st.session_state.api_key, offset=st.session_state.offset)
         grab_uplayer_info()
