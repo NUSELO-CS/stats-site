@@ -19,8 +19,8 @@ def grab_player_info():
 
 # Track last loaded page
 if st.session_state.get("last_page") != current_page:
-    st.session_state.active_tab = "matches"  # reset on page load
-    st.session_state.last_page = current_page  # update tracker
+    st.session_state.active_tab = "matches"
+    st.session_state.last_page = current_page  
     st.session_state.matches = []
     st.session_state.offset = 0
     st.session_state.player_name = ""

@@ -1,4 +1,5 @@
 import streamlit as st
+from api import get_profile
 
 st.set_page_config(
     page_title="NUSELO",
@@ -14,6 +15,13 @@ st.logo("public/favicon.png")
 
 if st.user.is_logged_in:
     st.session_state["api_key"] = st.user["https://nuselo.uk//api_token"]
+    discord_sub = st.user.get("sub", "")
+    user_id = discord_sub.split("|")[-1] if "discord" in discord_sub else None
+    if st.session_state["user_steam_id"] is None:
+        user_response = get_profile(user_id, st.session_state.api_key)
+        user_steam_id = user_response.get("steam_id", None)
+        st.session_state["user_steam_id"] = user_steam_id
+    
 
 events_page = st.Page("pages/Events.py", title="Events", icon=":material/trophy:")
 player_page = st.Page("pages/Player.py", title="Player Data", icon=":material/person:")
@@ -64,8 +72,9 @@ for key, default in {
     'last_page': "",
     'match_data': None,
     'player_name': "",
-    'comp_data': {}, # check prev clash
-    'selected_comp_id': ""
+    'comp_data': {},
+    'selected_comp_id': "",
+    "user_steam_id": None
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
