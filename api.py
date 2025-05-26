@@ -89,7 +89,7 @@ def generate_steam_url(user_id: str) -> str | None:
             data = response.json()
             steam_url = data.get("data", {}).get("steamAuthUrl")
             if steam_url and is_safe_url(steam_url, allowed_domain):
-                return html.escape(steam_url, quote=True)
+                return steam_url
             else:
                 st.error("Invalid or unsafe Steam auth URL.")
         else:

@@ -26,6 +26,7 @@ with st.container(border=True):
     col1, col2, col3 = st.columns([0.05, 0.90, 0.05], vertical_alignment="center")
 
     if st.user.is_logged_in:
+        logout_url = build_logout_url()
         with col1: 
             picture = st.user.get("picture")
             if picture:
@@ -44,7 +45,7 @@ with st.container(border=True):
 
                     # Show either the generate button or login link depending on state
                     if 'steam_login_url' not in st.session_state:
-                        if st.button("Connect your steam account",type="primary"):
+                        if st.button("Connect your steam account",type="secondary"):
                             if user_id:
                                 steam_url = generate_steam_url(user_id)
                                 if steam_url:
@@ -57,13 +58,12 @@ with st.container(border=True):
                     else:
                         steam_link = st.session_state['steam_login_url']
                         del st.session_state['steam_login_url']
-                        st.markdown(f'<meta http-equiv="refresh" content="0;url={steam_link}" />', unsafe_allow_html=True)
+                        st.toast("You will need to close the old page after connecting")
+                        st.link_button("Click here to connect",steam_link,type="primary")
                 else:
                     st.write(st.session_state["user_steam_id"])
         with col3:
             if st.button("Log out"):
-                logout_url = build_logout_url()
-                st.markdown(f'<meta http-equiv="refresh" content="0;url={logout_url}" />', unsafe_allow_html=True)
                 st.logout()
     else:
         with col2:
