@@ -27,8 +27,6 @@ def _api_get(endpoint: str, api_key: str, params: dict = None):
         response = requests.get(url, headers=headers, params=params)
         if response.status_code == 200:
             return response.json().get("data")
-        else:
-            st.toast(f"⚠️ API call failed (status {response.status_code})")
     except Exception as e:
         st.error(f"⚠️ Network error: {str(e)}")
     
