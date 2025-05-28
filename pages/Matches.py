@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 from api import get_match_info
 
 EXTENDED_KILL_FIELDS = {
@@ -74,7 +75,7 @@ TAB_CONFIGS = {
     "extended-deaths": {"fields": EXTENDED_DEATH_FIELDS, "sort": "Deaths", "label": "Extended Deaths"},
     "extended-duels": {"fields": EXTENDED_DUEL_FIELDS, "sort": "First Kills", "label": "Extended Duels"},
     "utility": {"fields": UTILITY_FIELDS, "sort": "Util thrown", "label": "Utility"},
-    "rounds": {"label": "Rounds"},
+    "comparison": {"label": "Comparison"},
 }
 
 status_styles = {
@@ -355,8 +356,72 @@ if active == "box-stats" and match_id:
     except Exception:
         st.error("⚠️ An error occurred while loading box stats.")
 
-elif active == "rounds" and match_id:
-    st.markdown("## Coming soon")
+elif active == "comparison" and match_id:
+    st.subheader("Player Comparison")
+
+    match_data = get_or_set_match_data()
+    if not match_data:
+        st.info("ℹ️ No match data found.")
+        st.stop()
+
+    # --- Select category
+    category_label = st.selectbox("📂 Select category", [config["label"] for config in TAB_CONFIGS.values() if "fields" in config])
+    reverse_tab_configs = {v["label"]: k for k, v in TAB_CONFIGS.items()}
+    selected_key = reverse_tab_configs[category_label]
+    selected_config = TAB_CONFIGS[selected_key]
+    fields = selected_config["fields"]
+
+    # --- Select field
+    selected_field_label = st.selectbox("📊 Select field", list(fields.keys()))
+    selected_field_key, fmt, default, relative_to = fields[selected_field_label]
+
+    def gather_players(team_data, team_name, color):
+        players = []
+        for player in team_data["players"]:
+            name = player["name"]
+            stats = player["stats"]
+            raw_value = stats.get(selected_field_key, default)
+            if relative_to:
+                relative_value = stats.get(relative_to, 1)
+                raw_value = (raw_value / relative_value * 100) if relative_value > 0 else 0.0
+
+            players.append({
+                "Player": name,
+                "Value": raw_value,
+                "Team": team_name,
+                "Color": color
+            })
+        return players
+
+    # Team info
+    score_info = match_data.get("score", [])
+    final_score = next((item for item in score_info if item.get("finish")), {})
+    team_a_name = final_score.get("team_a_name", "Team A")
+    team_b_name = final_score.get("team_b_name", "Team B")
+
+    # Gather all players in match
+    players_data = gather_players(match_data["teams"]["team_a"], team_a_name, "blue") + \
+                   gather_players(match_data["teams"]["team_b"], team_b_name, "red")
+
+    df_chart = pd.DataFrame(players_data)
+    df_chart = df_chart.sort_values(by="Value", ascending=False)
+
+    # Chart
+    st.altair_chart(
+        alt.Chart(df_chart)
+        .mark_bar()
+        .encode(
+            x=alt.X("Value:Q", title=selected_field_label),
+            y=alt.Y("Player:N", sort='-x'),
+            color=alt.Color("Team:N", scale=alt.Scale(domain=[team_a_name, team_b_name], range=["#1f77b4", "#d62728"])),
+            tooltip=["Player", "Team", alt.Tooltip("Value", format=".2f")]
+        )
+        .properties(height=500),
+        use_container_width=True
+    )
+
+
+
 elif active in TAB_CONFIGS and match_id:
     config = TAB_CONFIGS[active]
     try:
