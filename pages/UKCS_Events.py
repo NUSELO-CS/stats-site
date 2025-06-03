@@ -3,6 +3,8 @@ from collections import defaultdict
 from datetime import datetime
 from api import get_event_regions
 
+current_page = "UKCS_Events"
+
 def format_date(iso_date_str):
     dt = datetime.fromisoformat(iso_date_str.replace("Z", ""))
     return dt.strftime("%d %b %Y")
