@@ -9,6 +9,10 @@ current_page = "Player"
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "matches"
 
+steam_id_param = st.query_params.get("steam_id")
+if steam_id_param:
+    st.session_state.current_steam_id = steam_id_param
+
 def grab_player_info():
     if st.session_state.api_key and st.session_state.current_steam_id and st.session_state.active_tab == "matches":
         player_response = get_player_info(st.session_state.current_steam_id, st.session_state.api_key)
@@ -25,6 +29,7 @@ if st.session_state.get("last_page") != current_page:
     st.session_state.offset = 0
     st.session_state.player_name = ""
     st.session_state.end_of_data = False
+    st.query_params.clear()
     if st.session_state.current_steam_id:
         grab_player_info()
     
@@ -32,14 +37,15 @@ if st.session_state.get("last_page") != current_page:
 
 # Function to reset session state on steam id update
 def update_steam_id():
-    if steam_id != st.session_state.current_steam_id:  # If Steam ID has changed
-        st.session_state.matches = []  # Clear matches
+    if steam_id != st.session_state.current_steam_id:
+        st.session_state.matches = [] 
         st.session_state.offset = 0
         st.session_state.end_of_data = False
-        st.session_state.current_steam_id = steam_id  # Save the newer Steam ID
+        st.session_state.current_steam_id = steam_id 
         st.session_state.player_name = ""
         grab_player_info()
-        st.rerun()  # Force rerun
+        st.query_params.clear()
+        st.rerun()  
 
 
 player_name = st.session_state.get("player_name", "Player")
@@ -71,6 +77,7 @@ if st.session_state.active_tab == 'matches' and steam_id:
     try:
         new_matches = get_match_data(steam_id, st.session_state.api_key, offset=st.session_state.offset)
         grab_player_info()
+        st.query_params.steam_id = steam_id
         
         if new_matches is None:
             st.toast("⚠️ Failed to load match data.")
@@ -204,7 +211,7 @@ elif st.session_state.active_tab == 'stats':
             'kills': 'Kills',
             'deaths': 'Deaths',
             'assists': 'Assists',
-            'kd': 'K/D',
+            'kd': 'K-D',
             'kdr': 'K/D Ratio',
             'kpr': 'Kills Per Round',
             'adr': 'ADR',

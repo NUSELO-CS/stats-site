@@ -47,7 +47,12 @@ events_page = st.Page("pages/Events.py", title="Events", icon=":material/trophy:
 player_page = st.Page("pages/Player.py", title="Player Data", icon=":material/person:")
 home_page = st.Page("pages/Home.py", title="Home", icon=":material/home:")
 matches_page = st.Page("pages/Matches.py", title="Matches", icon=":material/tv:")
+
 rankings_page = st.Page("pages/Rankings.py", title="Rankings", icon=":material/language_gb_english:")
+ukcs_events_page = st.Page("pages/UKCS_Events.py",title="Events",icon=":material/trophy:")
+
+nacs_events_page = st.Page("pages/NACS_Events.py",title="Events",icon=":material/trophy:")
+
 profile_page = st.Page("pages/User.py", title="Profile", icon=":material/person:")
 
 if st.user.is_logged_in:
@@ -61,7 +66,11 @@ if st.user.is_logged_in:
         matches_page
     ],
     "UKCS": [
-        rankings_page
+        rankings_page,
+        ukcs_events_page
+    ],
+    "NACS": [
+        nacs_events_page
     ],
     "User": [
         profile_page

@@ -5,10 +5,16 @@ import altair as alt
 
 current_page = "Event"
 
+comp_id_param = st.query_params.get("comp_id")
+if comp_id_param:
+    st.session_state.selected_comp_id = comp_id_param
+
 if st.session_state.get("last_page") != current_page:
     st.session_state.active_tab = "summary"
     st.session_state.last_page = current_page
     st.session_state.comp_data = None
+    st.query_params.clear()
+    st.rerun()
 
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "summary"
@@ -48,7 +54,8 @@ comp_id = st.text_input("🔍 Enter a NUSELO Comp ID", value=st.session_state.se
 def update_comp_id():
     st.session_state.selected_comp_id = comp_id
     st.session_state.comp_id = ""
-    st.session_state.comp_data = None  
+    st.session_state.comp_data = None
+    st.query_params.clear()  
     st.rerun()
 
 if comp_id and comp_id != st.session_state.selected_comp_id:
@@ -68,6 +75,7 @@ if comp_id and not st.session_state.api_key:
 if st.session_state.active_tab == 'summary' and comp_id:
     try:
         comp_data = get_or_set_comp_data()
+        st.query_params.comp_id = comp_id
 
         if comp_data:
             map_data = comp_data.get("maps",[])

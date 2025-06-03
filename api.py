@@ -63,6 +63,9 @@ def get_player_info(steam_id: str, api_key: str):
 def get_event_details(event_id: str, api_key: str):
     return _api_get(f"/v2/data/comps/{event_id}", api_key)
 
+def get_event_regions(region: str, api_key: str):
+    return _api_get(f"/v2/data/comps/list?region={region}", api_key)
+
 def get_profile(user_id: str, api_key: str):
     params = {
         "user_id": user_id

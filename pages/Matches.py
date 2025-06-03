@@ -92,11 +92,18 @@ current_page = "Matches"
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "box-stats"
 
+match_id_param = st.query_params.get("match_id")
+if match_id_param:
+    st.session_state.selected_match_id = match_id_param
+
 # Track last loaded page
 if st.session_state.get("last_page") != current_page:
     st.session_state.active_tab = "box-stats"  # reset on page load
     st.session_state.last_page = current_page  # update tracker
     st.session_state.match_data = None
+    st.query_params.clear()
+
+
 
 # --- INPUT ---
 # Text input for Steam ID
@@ -107,6 +114,7 @@ def update_match_id():
     if match_id != st.session_state.selected_match_id:
         st.session_state.selected_match_id = match_id
         st.session_state.match_data = None  
+        st.query_params.clear()
         st.rerun()
 
 def display_team_table(team_name, team_score, df):
@@ -256,6 +264,7 @@ active = st.session_state.active_tab
 if active == "box-stats" and match_id:
     try:
         match_data = get_match_info(match_id, st.session_state.api_key)
+        st.query_params.match_id = match_id
 
         if match_data:
             score_info = match_data.get("score", [])
@@ -266,6 +275,10 @@ if active == "box-stats" and match_id:
             team_b_name = final_score.get("team_b_name", "")
             team_a_score = final_score.get("team_a_score", 0)
             team_b_score = final_score.get("team_b_score", 0)
+
+            comp_info = match_data.get("match",[])
+            comp_id = comp_info.get("competition","")
+            comp_name = comp_info.get("comp_name","")
 
             team_a_data = match_data["teams"]["team_a"]
             team_b_data = match_data["teams"]["team_b"]
@@ -333,22 +346,29 @@ if active == "box-stats" and match_id:
                 st.session_state.current_steam_id = val
                 st.switch_page("pages/Player.py")
             
-            ### - Handle vetos
+            ### - Handle vetos and return
 
-            lines = []
+
+            veto_lines = []
             for item in sorted(veto_info, key=lambda x: x["round"]):
                 team = team_a_name if item["team_letter"] == "a" else team_b_name
                 map_name = item["map"].replace("de_", "").capitalize()
                 color_label = status_styles.get(item["status"], (f":gray[{item['status'].capitalize()}]", item["status"].capitalize()))[0]
-                lines.append(f"{team} {color_label} {map_name}")
+                veto_lines.append(f"{team} {color_label} {map_name}")
 
-            output = "\n\n".join(lines)
-
+            veto_output = "\n\n".join(veto_lines)
 
             st.divider()
-            st.subheader("Match Vetos")
+            extra_details1, extra_details2 = st.columns([3,1],vertical_alignment="top")
+            with extra_details1:
+                st.subheader("Match Vetos")
+                st.markdown(veto_output)
+            
+            with extra_details2:
+                if st.button(label=f"Return to {comp_name}",use_container_width=True):
+                    st.session_state.selected_comp_id = comp_id
+                    st.switch_page("pages/Events.py")
 
-            st.markdown(output)
 
         else:
             st.info("ℹ️ No match data could be loaded")
