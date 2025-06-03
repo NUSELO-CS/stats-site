@@ -5,6 +5,9 @@ from api import get_event_regions
 
 current_page = "UKCS_Events"
 
+if st.session_state.get("last_page") != current_page:
+    st.session_state.last_page = current_page
+
 def format_date(iso_date_str):
     dt = datetime.fromisoformat(iso_date_str.replace("Z", ""))
     return dt.strftime("%d %b %Y")
