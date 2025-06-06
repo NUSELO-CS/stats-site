@@ -8,6 +8,10 @@ current_page = "NACS_Events"
 if st.session_state.get("last_page") != current_page:
     st.session_state.last_page = current_page
 
+if not st.user.is_logged_in:
+    st.session_state.redirected = True
+    st.switch_page("pages/User.py")
+
 def format_date(iso_date_str):
     dt = datetime.fromisoformat(iso_date_str.replace("Z", ""))
     return dt.strftime("%d %b %Y")

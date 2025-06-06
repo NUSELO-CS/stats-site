@@ -5,6 +5,10 @@ import altair as alt
 
 current_page = "Event"
 
+if not st.user.is_logged_in:
+    st.session_state.redirected = True
+    st.switch_page("pages/User.py")
+
 comp_id_param = st.query_params.get("comp_id")
 if comp_id_param:
     st.session_state.selected_comp_id = comp_id_param

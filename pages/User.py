@@ -4,6 +4,7 @@ import pandas as pd
 
 current_page = "Profile"
 
+
 def grab_uplayer_info():
     if st.session_state.api_key and st.session_state.user_steam_id:
         player_response = get_player_info(st.session_state.user_steam_id, st.session_state.api_key)
@@ -21,6 +22,10 @@ if st.session_state.get("last_page") != current_page:
         grab_uplayer_info()
     
     st.rerun()
+
+if st.session_state.redirected == True:
+    st.session_state.redirected = False
+    st.toast("You must be logged in to view that page.", icon="🚫")
 
 with st.container(border=True):
     col1, col2, col3 = st.columns([0.05, 0.90, 0.05], vertical_alignment="center")

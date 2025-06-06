@@ -28,7 +28,8 @@ for key, default in {
     'player_name': "",
     'comp_data': {},
     'selected_comp_id': "",
-    "user_steam_id": None
+    "user_steam_id": None,
+    "redirected": False
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
@@ -45,13 +46,13 @@ if st.user.is_logged_in:
 
 events_page = st.Page("pages/Events.py", title="Events", icon=":material/trophy:")
 player_page = st.Page("pages/Player.py", title="Player Data", icon=":material/person:")
-home_page = st.Page("pages/Home.py", title="Home", icon=":material/home:")
+home_page = st.Page("pages/Home.py", title="Home", icon=":material/home:",default=True)
 matches_page = st.Page("pages/Matches.py", title="Matches", icon=":material/tv:")
 
 rankings_page = st.Page("pages/Rankings.py", title="Rankings", icon=":material/language_gb_english:")
-ukcs_events_page = st.Page("pages/UKCS_Events.py",title="Events",icon=":material/trophy:")
+ukcs_events_page = st.Page("pages/UKCS_Events.py",title="UK Events",icon=":material/trophy:")
 
-nacs_events_page = st.Page("pages/NACS_Events.py",title="Events",icon=":material/trophy:")
+nacs_events_page = st.Page("pages/NACS_Events.py",title="NA Events",icon=":material/trophy:")
 
 profile_page = st.Page("pages/User.py", title="Profile", icon=":material/person:")
 
@@ -84,6 +85,14 @@ else:
     "User": [
         profile_page
     ],
+    "Unavailable": [
+        player_page,
+        events_page,
+        matches_page,
+        rankings_page,
+        ukcs_events_page,
+        nacs_events_page
+    ]
     }
 
 pg = st.navigation(pages, expanded=False)

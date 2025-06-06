@@ -3,6 +3,12 @@ import pandas as pd
 import altair as alt
 from api import get_match_info
 
+current_page = "Matches"
+
+if not st.user.is_logged_in:
+    st.session_state.redirected = True 
+    st.switch_page("pages/User.py")
+
 EXTENDED_KILL_FIELDS = {
     "Kills": ("kills", "{}", 0, None), 
     "Close Kills %": ("close_duels", "{:.1f}%", 0.0, "kills"),
@@ -85,8 +91,6 @@ status_styles = {
 }
 
 st.title("Match Data")
-
-current_page = "Matches"
 
 # Set default tab
 if "active_tab" not in st.session_state:

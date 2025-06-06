@@ -12,7 +12,7 @@ st.markdown(
 
         Features are being rolled out in stages, for access, feedback or bug reporting please use the link to the discord below:
 
-        ## Access here:
+        ## Support available here:
     """
 )
 

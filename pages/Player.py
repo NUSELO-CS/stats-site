@@ -5,6 +5,10 @@ from visualizations import create_avg_rating_chart, create_comparison_chart
 
 current_page = "Player"
 
+if not st.user.is_logged_in:
+    st.session_state.redirected = True
+    st.switch_page("pages/User.py") 
+
 # Set default tab
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "matches"
