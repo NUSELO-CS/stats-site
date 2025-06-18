@@ -4,6 +4,9 @@ current_page = "Home"
 if st.session_state.get("last_page") != current_page:
     st.session_state.last_page = current_page  
 
+if not st.user.is_logged_in:
+    st.toast("You must be logged in to access data. Navigate to the Log in page via the sidebar", icon="🚫")
+
 st.markdown(
         """
         # NUSELO Home Page

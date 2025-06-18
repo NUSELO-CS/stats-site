@@ -6,7 +6,7 @@ from api import get_match_info
 current_page = "Matches"
 
 if not st.user.is_logged_in:
-    st.session_state.redirected = True 
+    st.session_state.redirected = True
     st.switch_page("pages/User.py")
 
 EXTENDED_KILL_FIELDS = {

@@ -29,7 +29,7 @@ for key, default in {
     'comp_data': {},
     'selected_comp_id': "",
     "user_steam_id": None,
-    "redirected": False
+    "redirected": ""
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
@@ -54,7 +54,7 @@ ukcs_events_page = st.Page("pages/UKCS_Events.py",title="UK Events",icon=":mater
 
 nacs_events_page = st.Page("pages/NACS_Events.py",title="NA Events",icon=":material/trophy:")
 
-profile_page = st.Page("pages/User.py", title="Profile", icon=":material/person:")
+profile_page = st.Page("pages/User.py", title="Log in", icon=":material/person:")
 
 if st.user.is_logged_in:
     pages = {

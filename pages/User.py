@@ -24,7 +24,7 @@ if st.session_state.get("last_page") != current_page:
     st.rerun()
 
 if st.session_state.redirected == True:
-    st.session_state.redirected = False
+    st.session_state.redirected = ""
     st.toast("You must be logged in to view that page.", icon="🚫")
 
 with st.container(border=True):

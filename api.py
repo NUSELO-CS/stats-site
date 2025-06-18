@@ -27,6 +27,8 @@ def _api_get(endpoint: str, api_key: str, params: dict = None):
         response = requests.get(url, headers=headers, params=params)
         if response.status_code == 200:
             return response.json().get("data")
+        elif response.status_code == 403:
+            st.logout()
     except Exception as e:
         st.error(f"⚠️ Network error: {str(e)}")
     
