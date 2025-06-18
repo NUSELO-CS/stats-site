@@ -74,6 +74,19 @@ def get_profile(user_id: str, api_key: str):
     }
     return _api_get(f"/auther/profile", st.secrets['SERVER_API_KEY'],params)
 
+def get_current_rankings():
+    api_url = st.secrets["RANKING_URL"]
+    headers = {
+        "Authorization": f"Bearer {st.secrets['RANKING_API_KEY']}"
+    }
+
+    try:
+        response = requests.get(api_url, headers=headers)
+        if response.status_code == 200:
+            return response.json().get("data")
+    except Exception as e:
+        st.error(f"⚠️ Network error")
+
 def generate_steam_url(user_id: str) -> str | None:
     api_url = st.secrets["STEAM_AUTH_URL"]
     allowed_domain = get_allowed_domain()

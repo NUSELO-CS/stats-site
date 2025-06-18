@@ -82,6 +82,9 @@ else:
     "Landing": [
         home_page
     ],
+    "UKCS": [
+        rankings_page,
+    ],
     "User": [
         profile_page
     ],
@@ -89,7 +92,6 @@ else:
         player_page,
         events_page,
         matches_page,
-        rankings_page,
         ukcs_events_page,
         nacs_events_page
     ]
