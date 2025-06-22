@@ -26,15 +26,21 @@ for key, default in {
     'last_page': "",
     'match_data': None,
     'player_name': "",
+    'db_name': "",
     'comp_data': {},
+    'player_db_data': {},
     'selected_comp_id': "",
-    "user_steam_id": None,
-    "redirected": ""
+    'user_steam_id': None,
+    'redirected': "",
+    'db_steam_id': "",
+    'db_searching': True
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
 
 if st.user.is_logged_in:
+    if not st.user.get("https://nuselo.uk//api_token"):
+        st.logout()
     st.session_state["api_key"] = st.user["https://nuselo.uk//api_token"]
     discord_sub = st.user.get("sub", "")
     user_id = discord_sub.split("|")[-1] if "discord" in discord_sub else None
@@ -51,6 +57,7 @@ matches_page = st.Page("pages/Matches.py", title="Matches", icon=":material/tv:"
 
 rankings_page = st.Page("pages/Rankings.py", title="Rankings", icon=":material/language_gb_english:")
 ukcs_events_page = st.Page("pages/UKCS_Events.py",title="UK Events",icon=":material/trophy:")
+ukcs_database_page = st.Page("pages/UKCS_Database.py",title="UKCS Database",icon=":material/database:")
 
 nacs_events_page = st.Page("pages/NACS_Events.py",title="NA Events",icon=":material/trophy:")
 
@@ -68,7 +75,8 @@ if st.user.is_logged_in:
     ],
     "UKCS": [
         rankings_page,
-        ukcs_events_page
+        ukcs_events_page,
+        ukcs_database_page
     ],
     "NACS": [
         nacs_events_page
@@ -93,6 +101,7 @@ else:
         events_page,
         matches_page,
         ukcs_events_page,
+        ukcs_database_page,
         nacs_events_page
     ]
     }

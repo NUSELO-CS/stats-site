@@ -17,8 +17,25 @@ def get_allowed_domain():
     parsed = urlparse(st.secrets["BASE_URL"])
     return parsed.netloc
 
-def _api_get(endpoint: str, api_key: str, params: dict = None):
+def _api_data_get(endpoint: str, api_key: str, params: dict = None):
     url = f"{st.secrets['BASE_URL']}{endpoint}"
+    headers = {
+        "Authorization": f"Bearer {api_key}"
+    }
+
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        if response.status_code == 200:
+            return response.json().get("data")
+        elif response.status_code == 403:
+            st.logout()
+    except Exception as e:
+        st.error(f"⚠️ Network error: {str(e)}")
+    
+    return None  
+
+def _api_db_get(endpoint: str, api_key: str, params: dict = None):
+    url = f"{st.secrets['DB_BASE_URL']}{endpoint}"
     headers = {
         "Authorization": f"Bearer {api_key}"
     }
@@ -42,7 +59,7 @@ def get_match_data(steam_id: str, api_key: str, offset=0, limit=20):
         "offset": offset,
         "limit": limit
     }
-    return _api_get("/v2/data/players/matches", api_key, params)
+    return _api_data_get("/v2/data/players/matches", api_key, params)
 
 
 def get_player_stats(steam_id: str, api_key: str):
@@ -50,29 +67,35 @@ def get_player_stats(steam_id: str, api_key: str):
         "steam_id": steam_id,
         "order": "desc"
     }
-    return _api_get("/v2/data/players/stats", api_key, params)
+    return _api_data_get("/v2/data/players/stats", api_key, params)
 
 
 def get_match_info(match_id: str, api_key: str):
-    return _api_get(f"/v2/data/matches/{match_id}", api_key)
+    return _api_data_get(f"/v2/data/matches/{match_id}", api_key)
 
 def get_player_info(steam_id: str, api_key: str):
     params = {
         "steam_id": steam_id
     }
-    return _api_get("/v2/data/players/info", api_key, params)
+    return _api_data_get("/v2/data/players/info", api_key, params)
 
 def get_event_details(event_id: str, api_key: str):
-    return _api_get(f"/v2/data/comps/{event_id}", api_key)
+    return _api_data_get(f"/v2/data/comps/{event_id}", api_key)
 
 def get_event_regions(region: str, api_key: str):
-    return _api_get(f"/v2/data/comps/list?region={region}", api_key)
+    return _api_data_get(f"/v2/data/comps/list?region={region}", api_key)
 
 def get_profile(user_id: str, api_key: str):
     params = {
         "user_id": user_id
     }
-    return _api_get(f"/auther/profile", st.secrets['SERVER_API_KEY'],params)
+    return _api_data_get(f"/auther/profile", st.secrets['SERVER_API_KEY'],params)
+
+def get_ukcs_details(steam_id: str, api_key: str):
+    return _api_db_get(f"/player/details?steam_id={steam_id}", api_key)
+
+def get_ukcs_players(letter: str, api_key: str):
+    return _api_db_get(f"/player/find?letter={letter}", api_key)
 
 def get_current_rankings():
     api_url = st.secrets["RANKING_URL"]

@@ -372,8 +372,6 @@ if active == "box-stats" and match_id:
                 if st.button(label=f"Return to {comp_name}",use_container_width=True):
                     st.session_state.selected_comp_id = comp_id
                     st.switch_page("pages/Events.py")
-
-
         else:
             st.info("ℹ️ No match data could be loaded")
 
