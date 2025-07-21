@@ -28,6 +28,7 @@ for key, default in {
     'player_name': "",
     'db_name': "",
     'comp_data': {},
+    'comp_stats': {},
     'player_db_data': {},
     'selected_comp_id': "",
     'user_steam_id': None,

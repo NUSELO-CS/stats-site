@@ -85,6 +85,18 @@ def get_event_details(event_id: str, api_key: str):
 def get_event_regions(region: str, api_key: str):
     return _api_data_get(f"/v2/data/comps/list?region={region}", api_key)
 
+def get_event_stats(event_id: str, api_key: str):
+    return _api_data_get(f"/v2/data/comps/stats?comp_id={event_id}", api_key)
+
+def get_event_matches(event_id: str, api_key: str, offset=0, limit=20):
+    params = {
+        "comp_id": event_id,
+        "order": "desc",
+        "offset": offset,
+        "limit": limit
+    }
+    return _api_data_get("/v2/data/comps/matches", api_key, params)
+
 def get_profile(user_id: str, api_key: str):
     params = {
         "user_id": user_id
