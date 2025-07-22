@@ -26,6 +26,7 @@ for event in events:
 cols_per_row = 4
 
 for organizer, organizer_events in grouped_events.items():
+    organizer_events.sort(key=lambda x: x.get('earliest_date', ''),reverse=True)
     st.header(organizer)
 
     for i in range(0, len(organizer_events), cols_per_row):

@@ -62,7 +62,8 @@ ukcs_database_page = st.Page("pages/UKCS_Database.py",title="UKCS Database",icon
 
 nacs_events_page = st.Page("pages/NACS_Events.py",title="NA Events",icon=":material/trophy:")
 
-profile_page = st.Page("pages/User.py", title="Log in", icon=":material/person:")
+login_page = st.Page("pages/User.py", title="Log in", icon=":material/person:")
+profile_page = st.Page("pages/User.py", title="Profile", icon=":material/person:")
 
 if st.user.is_logged_in:
     pages = {
@@ -95,7 +96,7 @@ else:
         rankings_page,
     ],
     "User": [
-        profile_page
+        login_page
     ],
     "Unavailable": [
         player_page,

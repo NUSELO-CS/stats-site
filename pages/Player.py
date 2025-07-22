@@ -1,6 +1,7 @@
 import streamlit as st
+import re
 import pandas as pd
-from api import get_match_data, get_player_stats, get_player_info
+from api import get_match_data, get_player_stats, get_player_info, grab_steam_from_faceit
 from visualizations import create_avg_rating_chart, create_comparison_chart
 
 current_page = "Player"
@@ -58,7 +59,26 @@ st.title(f"{player_name} Stats")
 
 # --- INPUT ---
 # Text input for Steam ID
-steam_id = st.text_input("🔍 Enter your Steam ID:", value=st.session_state.current_steam_id)
+user_input = st.text_input("🔍 Enter your Steam ID or players exact FACEIT name:", value=st.session_state.current_steam_id)
+steam_id = None
+
+if user_input:
+    if user_input.isdigit():
+        steam_id = user_input 
+    elif re.fullmatch(r"[A-Za-z0-9_-]+", user_input):
+        user_faceit = user_input
+        faceit_steam = grab_steam_from_faceit(user_faceit)
+
+        if not faceit_steam:
+            st.error("❌ Could not retrieve FACEIT ID for the provided nickname.")
+            st.stop()
+        
+        steam_id = faceit_steam
+    else:
+        st.error("❌ Input must be either all numbers (Steam ID) or all letters (FACEIT nickname).")
+        st.stop()
+
+
 
 # Trigger the function when the Steam ID is different
 if steam_id and steam_id != st.session_state.current_steam_id:

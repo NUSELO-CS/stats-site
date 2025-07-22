@@ -94,7 +94,7 @@ if st.session_state.api_key and st.session_state.db_searching == True:
     selected_letter = st.selectbox("Select a letter to search player:", letters)
 
     ukcs_p_response = get_ukcs_players(selected_letter, st.session_state.api_key)
-    players = ukcs_p_response["players"]
+    players = sorted(ukcs_p_response["players"], key=lambda p: p["name"].lower())
 
     st.write(f"Players starting with **{selected_letter}**:")
 

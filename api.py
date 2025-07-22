@@ -144,9 +144,9 @@ def generate_steam_url(user_id: str) -> str | None:
             else:
                 st.error("Invalid or unsafe Steam auth URL.")
         else:
-            st.error(f"Steam auth API error: {response.status_code} — {response.text}")
+            st.error(f"Steam auth API error: {response.status_code}")
     except Exception as e:
-        st.error(f"Exception while generating Steam URL: {e}")
+        st.error(f"Exception while generating Steam URL")
 
     return None
 
@@ -157,3 +157,22 @@ def build_logout_url():
         f"returnTo={st.secrets['SITE_DOMAIN']}"
     )
     return logout_url
+
+
+def grab_steam_from_faceit(nickname: str):
+    headers = {
+        "Authorization": f"Bearer {st.secrets['FACEIT_OPEN']}"
+    }
+    user_url = f"https://open.faceit.com/data/v4/players?game=cs2&nickname={nickname}"
+
+    try:
+        response = requests.get(user_url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("games", {}).get("cs2", {}).get("game_player_id")
+        else:
+            st.error(f"FACEIT API error {response.status_code}")
+    except Exception as e:
+        st.error(f"Exception while executing FACEIT data grab")
+
+    return None

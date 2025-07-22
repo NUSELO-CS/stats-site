@@ -29,7 +29,8 @@ EXTENDED_KILL_FIELDS = {
     "Kills against ecos %": ("kills_against_ecos", "{:.1f}%", 0.0, "kills"),
     "Trade Kills %": ("kills_traded", "{:.1f}%", 0.0, "kills"),
     "Kills that are traded %": ("kills_that_are_trades", "{:.1f}%", 0.0, "kills"),
-    "Kills assisted by flash": ("kills_assisted_by_flash", "{}", 0, None),  #
+    "Kills assisted by flash": ("kills_assisted_by_flash", "{}", 0, None), 
+    "Kills assisted by flash %": ("kills_assisted_by_flash", "{:.1f}%", 0.0, "kills"), 
     "AWP Kills": ("awp_kills", "{}", 0, None), 
     "Pistol Round Kills": ("pistol_round_kills", "{}", 0, None), 
 }
@@ -53,8 +54,9 @@ EXTENDED_DEATH_FIELDS = {
     "Flawless Deaths %": ("flawless_deaths", "{:.1f}%", 0.0, "deaths"),
     "Deaths against worse econ %": ("deaths_better_econ", "{:.1f}%", 0.0, "deaths"),
     "Deaths against ecos %": ("deaths_against_ecos", "{:.1f}%", 0.0, "deaths"),
-    "Deaths that are traded %": ("deaths_traded", "{:.1f}%", 0.0, "kideathslls"),
-    "Deaths assisted by flash": ("deaths_assisted_by_flash", "{}", 0, None),  #
+    "Deaths that are traded %": ("deaths_traded", "{:.1f}%", 0.0, "deaths"),
+    "Deaths assisted by flash": ("deaths_assisted_by_flash", "{}", 0, None), 
+    "Deaths assisted by flash %": ("deaths_assisted_by_flash", "{:.1f}%", 0.0, "deaths"), 
     "Deaths to AWP": ("awp_deaths", "{}", 0, None), 
     "Pistol Round Deaths": ("pistol_round_deaths", "{}", 0, None), 
 }
@@ -107,8 +109,18 @@ def make_table_from_fields(stats_data, fields_dict):
         row["team_name"] = player.get("team_name", "")
         for col_name, (key, fmt, default, base_key) in fields_dict.items():
             val = player.get(key, default)
+            
+            if base_key:
+                base_val = player.get(base_key, None)
+                if base_val in (0, None):
+                    val = 0
+                else:
+                    val = val / base_val
+                    if '%' in fmt:
+                        val *= 100
+                val = round(val, 2)  # rounds vals
+            
             row[col_name] = val
-        # Add steam_id for tracking selection, always hide the val
         row["steam_id"] = player.get("steam_id", None)
         rows.append(row)
 
@@ -127,6 +139,7 @@ if st.session_state.get("last_page") != current_page:
     st.session_state.active_tab = "summary"
     st.session_state.last_page = current_page
     st.session_state.comp_data = None
+    st.session_state.comp_stats = None
     st.query_params.clear()
     st.rerun()
 
@@ -185,6 +198,7 @@ def update_comp_id():
     st.session_state.selected_comp_id = comp_id
     st.session_state.comp_id = ""
     st.session_state.comp_data = None
+    st.session_state.comp_stats = None
     st.query_params.clear()  
     st.rerun()
 
@@ -192,13 +206,15 @@ if comp_id and comp_id != st.session_state.selected_comp_id:
     update_comp_id()
 
 if comp_id and st.session_state.api_key:
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     if col1.button("Summary", use_container_width=True):
         st.session_state.active_tab = 'summary'
     if col2.button("Players", use_container_width=True):
         st.session_state.active_tab = 'players'
     if col3.button("Matches", use_container_width=True):
         st.session_state.active_tab = 'matches'
+    if col4.button("Graphs", use_container_width=True):
+        st.session_state.active_tab = 'graphs'
 
 if comp_id and not st.session_state.api_key:
     st.warning("⚠️ API key required. Please enter it in the sidebar.")
@@ -496,3 +512,122 @@ if st.session_state.active_tab == 'matches' and comp_id:
     
     except Exception as e:
         st.error("⚠️ An unexpected error occurred while loading comp data.")    
+
+if st.session_state.active_tab == 'graphs' and comp_id:
+    try:
+        comp_stats = get_or_set_comp_stats()
+
+        if comp_stats:
+            all_fields = {**BOX_FIELDS, **CONTRIBUTION_FIELDS, **EXTENDED_KILL_FIELDS, 
+                          **EXTENDED_DEATH_FIELDS, **EXTENDED_DUEL_FIELDS, **UTILITY_FIELDS}
+
+            df = make_table_from_fields(comp_stats, all_fields)
+            df = df.rename(columns={"name": "Player", "team_name": "Team"})
+
+            st.subheader("📊 Player Stats Comparison")
+
+            numeric_cols = [col for col in df.columns if col not in ("Player", "Team", "steam_id")]
+
+            default_x = "Rating" if "Rating" in numeric_cols else (numeric_cols[0] if numeric_cols else None)
+            default_y = "KAST%" if "KAST%" in numeric_cols else (numeric_cols[1] if len(numeric_cols) > 1 else None)
+
+            with st.expander("Show Player Stats Graph", expanded=True):
+                x_axis = st.selectbox("Select X-axis", numeric_cols, index=numeric_cols.index(default_x) if default_x else 0, key="graph_x")
+                y_axis = st.selectbox("Select Y-axis", numeric_cols, index=numeric_cols.index(default_y) if default_y else 0, key="graph_y")
+
+                teams = sorted({p.get("team_name") for p in comp_stats if p.get("team_name")})
+                teams.insert(0, "All Teams")
+
+                selected_teams = st.multiselect("Select Teams to Display (leave empty for all)", options=teams[1:], default=[])
+                highlight_team = st.selectbox("Highlight Team (optional)", teams, index=0)
+                players = sorted(df['Player'].unique())
+                highlight_player = st.selectbox("Highlight Player (optional)", [""] + players, index=0)
+
+                if selected_teams:
+                    df_filtered = df[df['Team'].isin(selected_teams)].copy()
+                else:
+                    df_filtered = df.copy()
+
+                # Rounding for display
+                df_filtered[x_axis] = df_filtered[x_axis].round(2)
+                df_filtered[y_axis] = df_filtered[y_axis].round(2)
+
+                highlight_expr = []
+                if highlight_team != "All Teams":
+                    highlight_expr.append(f"datum.Team === '{highlight_team}'")
+                if highlight_player != "":
+                    highlight_expr.append(f"datum.Player === '{highlight_player}'")
+
+                condition_str = " || ".join(highlight_expr) if highlight_expr else "true"
+
+                # Checkbox for control of axis start point
+                start_at_zero = st.checkbox("Start X and Y Axes at 0", value=False)
+
+                # Axis calcs
+                x_min = 0 if start_at_zero else df_filtered[x_axis].min()
+                x_max = df_filtered[x_axis].max()
+                y_min = 0 if start_at_zero else df_filtered[y_axis].min()
+                y_max = df_filtered[y_axis].max()
+
+                base = alt.Chart(df_filtered).mark_circle(size=80, clip=False).encode(
+                    x=alt.X(x_axis, title=x_axis, scale=alt.Scale(domain=[x_min, x_max])),
+                    y=alt.Y(y_axis, title=y_axis, scale=alt.Scale(domain=[y_min, y_max])),
+                    tooltip=["Player", "Team", x_axis, y_axis],
+                    color=alt.Color(
+                        "Team:N",
+                        scale=alt.Scale(scheme='category20'),
+                        legend=alt.Legend(title="Team")
+                    ),
+                    opacity=alt.condition(
+                        condition_str,
+                        alt.value(1.0),
+                        alt.value(0.3)
+                    )
+                ).properties(width=700, height=700)
+
+                num_players = df_filtered['Player'].nunique()
+                auto_show_labels = num_players < 200
+                show_labels = st.checkbox("Show Player Labels", value=auto_show_labels)
+
+                if show_labels:
+                    text = base.mark_text(
+                        align='center',
+                        baseline='bottom',
+                        dy=-7,
+                        fontSize=10,
+                        color='black'
+                    ).encode(
+                        text=alt.condition(
+                            condition_str,
+                            'Player:N',
+                            alt.value('')
+                        )
+                    )
+                    chart = base + text
+                else:
+                    chart = base
+
+                show_avg_lines = st.checkbox("Show Average Lines")
+
+                if show_avg_lines:
+                    avg_x = df_filtered[x_axis].mean()
+                    avg_y = df_filtered[y_axis].mean()
+
+                    avg_lines = alt.Chart(pd.DataFrame({
+                        x_axis: [avg_x, avg_x],
+                        y_axis: [y_min, y_max]
+                    })).mark_rule(color='grey', strokeDash=[4, 4]).encode(x=x_axis)
+
+                    avg_lines_y = alt.Chart(pd.DataFrame({
+                        y_axis: [avg_y, avg_y],
+                        x_axis: [x_min, x_max]
+                    })).mark_rule(color='grey', strokeDash=[4, 4]).encode(y=y_axis)
+
+                    chart = chart + avg_lines + avg_lines_y
+
+                st.altair_chart(chart, use_container_width=True)
+
+    except Exception as e:
+        st.error(f"Failed to load graph stats:")
+
+
