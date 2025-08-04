@@ -62,17 +62,17 @@ EXTENDED_DEATH_FIELDS = {
 }
 
 EXTENDED_DUEL_FIELDS = {
-    "First Kills": ("first_kills", "{}", 0, None), 
+    "First Kills / Round": ("first_kills", "{}", 0, "rounds"), 
     "FK lead to win%": ("fk_wr", "{:.1f}%", 0.0, "first_kills"), 
-    "T First Kills": ("t_fk", "{}", 0.0, None), 
+    "T FK / Round": ("t_fk", "{}", 0.0, "rounds"), 
     "T FK win%": ("t_fk_wr", "{:.1f}%", 0.0, "t_fk"), 
-    "CT First Kills": ("ct_fk", "{}", 0.0, None), 
+    "CT FK / Round": ("ct_fk", "{}", 0.0, "rounds"), 
     "CT FK win%": ("ct_fk_wr", "{:.1f}%", 0.0, "ct_fk"), 
-    "First Deaths": ("first_deaths", "{}", 0.0, None), 
+    "First Deaths / Round": ("first_deaths", "{}", 0.0, "rounds"), 
     "FD lead to loss%": ("fd_lr", "{:.1f}%", 0.0, "first_deaths"), 
-    "T First Deaths": ("t_fd", "{}", 0.0, None), 
+    "T FDs / Round": ("t_fd", "{}", 0.0, "rounds"), 
     "T FD loss%": ("t_fd_lr", "{:.1f}%", 0.0, "t_fd"), 
-    "CT First Deaths": ("ct_fd", "{}", 0.0, None), 
+    "CT FDs / Round": ("ct_fd", "{}", 0.0, "rounds"), 
     "CT FK loss%": ("ct_fd_lr", "{:.1f}%", 0.0, "ct_fd"), 
 }
 
