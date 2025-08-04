@@ -15,7 +15,7 @@ BOX_FIELDS = {
     "Rating": ("rating", 2, 0.0, None),
     "CT Rating": ("ct_rating", 2, 0.0, None),
     "T Rating": ("t_rating", 2, 0.0, None),
-    "KAST%": ("kast", 2, 0.0, None),
+    "KAST": ("kast", 2, 0.0, None),
     "K-D": ("kd", 0, 0, None), 
     "KDR": ("kdr", 2, 0.0, None),
     "HS%": ("hs", 1, 0.0, "kills"),
@@ -39,7 +39,7 @@ CONTRIBUTION_FIELDS = {
     "Rating": ("rating", 2, 0.0, None),
     "CT Rating": ("ct_rating", 2, 0.0, None),
     "T Rating": ("t_rating", 2, 0.0, None),
-    "KAST%": ("kast", 2, 0.0, None),
+    "KAST": ("kast", 2, 0.0, None),
     "KAST leading to win": ("kast_leading_to_win", 1, 0.0, None),
     "KAST in team wins": ("kast_in_team_win", 1, 0.0, None),
     "CT KAST leading to win": ("ct_kast_leading_to_win", 1, 0.0, None),
@@ -255,16 +255,16 @@ if st.session_state.active_tab == 'summary' and comp_id:
             'match_checksum': 'Match ID',
             'team': 'Team',
             'rating': 'Rating',
-            'kast': 'KAST%'
+            'kast': 'KAST'
             }, inplace=True)
 
-            tp_columns = ['Match ID','Player','Team','Rating','KAST%','K-D']
+            tp_columns = ['Match ID','Player','Team','Rating','KAST','K-D']
 
             for col in tp_columns:
                 if col not in top_performance_df.columns:
                     top_performance_df[col] = None 
 
-            numeric_columns = ['Rating', 'KAST%']
+            numeric_columns = ['Rating', 'KAST']
             for col in numeric_columns:
                 top_performance_df[col] = top_performance_df[col].apply(lambda x: f"{x:.2f}" if pd.notnull(x) else None)
 
@@ -282,7 +282,7 @@ if st.session_state.active_tab == 'summary' and comp_id:
                 'maps': 'Maps',
                 'team': 'Team',
                 'rating': 'Rating',
-                'kast': 'KAST%',
+                'kast': 'KAST',
                 'adr': 'ADR'
             }, inplace=True)
 
@@ -299,7 +299,7 @@ if st.session_state.active_tab == 'summary' and comp_id:
             else:
                 top_players_df = pd.DataFrame()
 
-            pdf_columns = ['Player', 'Team', 'Maps', 'Rating', 'KAST%', 'ADR']
+            pdf_columns = ['Player', 'Team', 'Maps', 'Rating', 'KAST', 'ADR']
 
             for col in pdf_columns:
                 if col not in top_players_df.columns:
@@ -534,7 +534,7 @@ if st.session_state.active_tab == 'graphs' and comp_id:
             numeric_cols = [col for col in df.columns if col not in ("Player", "Team", "steam_id")]
 
             default_x = "Rating" if "Rating" in numeric_cols else (numeric_cols[0] if numeric_cols else None)
-            default_y = "KAST%" if "KAST%" in numeric_cols else (numeric_cols[1] if len(numeric_cols) > 1 else None)
+            default_y = "KAST" if "KAST" in numeric_cols else (numeric_cols[1] if len(numeric_cols) > 1 else None)
 
             with st.expander("Show Player Stats Graph", expanded=True):
                 x_axis = st.selectbox("Select X-axis", numeric_cols, index=numeric_cols.index(default_x) if default_x else 0, key="graph_x")
