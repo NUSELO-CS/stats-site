@@ -8,84 +8,84 @@ current_page = "Event"
 ## this is duplicated. sort when more time
 
 BOX_FIELDS = {
-    "Matches": ("matches", "{}", 0, None), 
-    "Kills": ("kills", "{}", 0, None), 
-    "Deaths": ("deaths", "{}", 0, None), 
-    "Assists": ("assists", "{}", 0, None), 
-    "Rating": ("rating", "{:.2f}", 0.0, None),
-    "CT Rating": ("ct_rating", "{:.2f}", 0.0, None),
-    "T Rating": ("t_rating", "{:.2f}", 0.0, None),
-    "KAST%": ("kast", "{:.2f}", 0.0, None),
-    "K-D": ("kd", "{}", 0, None), 
-    "KDR": ("kdr", "{:.2f}", 0.0, None),
-    "HS%": ("hs", "{:.1f}%", 0.0, "kills"),
+    "Matches": ("matches", 0, 0, None), 
+    "Kills": ("kills", 0, 0, None), 
+    "Deaths": ("deaths", 0, 0, None), 
+    "Assists": ("assists", 0, 0, None), 
+    "Rating": ("rating", 2, 0.0, None),
+    "CT Rating": ("ct_rating", 2, 0.0, None),
+    "T Rating": ("t_rating", 2, 0.0, None),
+    "KAST%": ("kast", 2, 0.0, None),
+    "K-D": ("kd", 0, 0, None), 
+    "KDR": ("kdr", 2, 0.0, None),
+    "HS%": ("hs", 1, 0.0, "kills"),
 }
 
 EXTENDED_KILL_FIELDS = {
-    "Kills": ("kills", "{}", 0, None), 
-    "Close Kills %": ("close_duels", "{:.1f}%", 0.0, "kills"),
-    "Flawless Kills %": ("flawless_kills", "{:.1f}%", 0.0, "kills"),
-    "Kills against worse econ %": ("kills_better_econ", "{:.1f}%", 0.0, "kills"),
-    "Kills against ecos %": ("kills_against_ecos", "{:.1f}%", 0.0, "kills"),
-    "Trade Kills %": ("kills_traded", "{:.1f}%", 0.0, "kills"),
-    "Kills that are traded %": ("kills_that_are_trades", "{:.1f}%", 0.0, "kills"),
-    "Kills assisted by flash": ("kills_assisted_by_flash", "{}", 0, None), 
-    "Kills assisted by flash %": ("kills_assisted_by_flash", "{:.1f}%", 0.0, "kills"), 
-    "AWP Kills": ("awp_kills", "{}", 0, None), 
-    "Pistol Round Kills": ("pistol_round_kills", "{}", 0, None), 
+    "Kills": ("kills", 0, 0, None), 
+    "Close Kills %": ("close_duels", 1, 0.0, "kills"),
+    "Flawless Kills %": ("flawless_kills", 1, 0.0, "kills"),
+    "Kills against worse econ %": ("kills_better_econ", 1, 0.0, "kills"),
+    "Kills against ecos %": ("kills_against_ecos", 1, 0.0, "kills"),
+    "Trade Kills %": ("kills_traded", 1, 0.0, "kills"),
+    "Kills that are traded %": ("kills_that_are_trades", 1, 0.0, "kills"),
+    "Kills assisted by flash": ("kills_assisted_by_flash", 0, 0, None), 
+    "Kills assisted by flash %": ("kills_assisted_by_flash", 1, 0.0, "kills"), 
+    "AWP Kills": ("awp_kills", 0, 0, None), 
+    "Pistol Round Kills": ("pistol_round_kills", 0, 0, None), 
 }
 
 CONTRIBUTION_FIELDS = {
-    "Rating": ("rating", "{:.2f}", 0.0, None),
-    "CT Rating": ("ct_rating", "{:.2f}", 0.0, None),
-    "T Rating": ("t_rating", "{:.2f}", 0.0, None),
-    "KAST%": ("kast", "{:.2f}", 0.0, None),
-    "KAST leading to win": ("kast_leading_to_win", "{:.1f}", 0.0, None),
-    "KAST in team wins": ("kast_in_team_win", "{:.1f}", 0.0, None),
-    "CT KAST leading to win": ("ct_kast_leading_to_win", "{:.1f}", 0.0, None),
-    "CT KAST in team wins": ("ct_kast_in_team_win", "{:.1f}", 0.0, None),
-    "T KAST leading to win": ("t_kast_leading_to_win", "{:.1f}", 0.0, None),
-    "T KAST in team wins": ("t_kast_in_team_win", "{:.1f}", 0.0, None),
+    "Rating": ("rating", 2, 0.0, None),
+    "CT Rating": ("ct_rating", 2, 0.0, None),
+    "T Rating": ("t_rating", 2, 0.0, None),
+    "KAST%": ("kast", 2, 0.0, None),
+    "KAST leading to win": ("kast_leading_to_win", 1, 0.0, None),
+    "KAST in team wins": ("kast_in_team_win", 1, 0.0, None),
+    "CT KAST leading to win": ("ct_kast_leading_to_win", 1, 0.0, None),
+    "CT KAST in team wins": ("ct_kast_in_team_win", 1, 0.0, None),
+    "T KAST leading to win": ("t_kast_leading_to_win", 1, 0.0, None),
+    "T KAST in team wins": ("t_kast_in_team_win", 1, 0.0, None),
 }
 
 EXTENDED_DEATH_FIELDS = {
-    "Deaths": ("deaths", "{}", 0, None), 
-    "Close Deaths %": ("close_duels", "{:.1f}%", 0.0, "deaths"),
-    "Flawless Deaths %": ("flawless_deaths", "{:.1f}%", 0.0, "deaths"),
-    "Deaths against worse econ %": ("deaths_better_econ", "{:.1f}%", 0.0, "deaths"),
-    "Deaths against ecos %": ("deaths_against_ecos", "{:.1f}%", 0.0, "deaths"),
-    "Deaths that are traded %": ("deaths_traded", "{:.1f}%", 0.0, "deaths"),
-    "Deaths assisted by flash": ("deaths_assisted_by_flash", "{}", 0, None), 
-    "Deaths assisted by flash %": ("deaths_assisted_by_flash", "{:.1f}%", 0.0, "deaths"), 
-    "Deaths to AWP": ("awp_deaths", "{}", 0, None), 
-    "Pistol Round Deaths": ("pistol_round_deaths", "{}", 0, None), 
+    "Deaths": ("deaths", 0, 0, None), 
+    "Close Deaths %": ("close_duels", 1, 0.0, "deaths"),
+    "Flawless Deaths %": ("flawless_deaths", 1, 0.0, "deaths"),
+    "Deaths against worse econ %": ("deaths_better_econ", 1, 0.0, "deaths"),
+    "Deaths against ecos %": ("deaths_against_ecos", 1, 0.0, "deaths"),
+    "Deaths that are traded %": ("deaths_traded", 1, 0.0, "deaths"),
+    "Deaths assisted by flash": ("deaths_assisted_by_flash", 0, 0, None), 
+    "Deaths assisted by flash %": ("deaths_assisted_by_flash", 1, 0.0, "deaths"), 
+    "Deaths to AWP": ("awp_deaths", 0, 0, None), 
+    "Pistol Round Deaths": ("pistol_round_deaths", 0, 0, None), 
 }
 
 EXTENDED_DUEL_FIELDS = {
-    "First Kills / Round": ("first_kills", "{:.3f}", 0, "rounds"), 
-    "FK lead to win%": ("fk_wr", "{:.1f}%", 0.0, "first_kills"), 
-    "T FK / Round": ("t_fk", "{:.3f}", 0.0, "rounds"), 
-    "T FK win%": ("t_fk_wr", "{:.1f}%", 0.0, "t_fk"), 
-    "CT FK / Round": ("ct_fk", "{:.3f}", 0.0, "rounds"), 
-    "CT FK win%": ("ct_fk_wr", "{:.1f}%", 0.0, "ct_fk"), 
-    "First Deaths / Round": ("first_deaths", "{:.3f}", 0.0, "rounds"), 
-    "FD lead to loss%": ("fd_lr", "{:.1f}%", 0.0, "first_deaths"), 
-    "T FDs / Round": ("t_fd", "{:.3f}", 0.0, "rounds"), 
-    "T FD loss%": ("t_fd_lr", "{:.1f}%", 0.0, "t_fd"), 
-    "CT FDs / Round": ("ct_fd", "{:.3f}", 0.0, "rounds"), 
-    "CT FK loss%": ("ct_fd_lr", "{:.1f}%", 0.0, "ct_fd"), 
+    "First Kills / Round": ("first_kills", 3, 0, "rounds"), 
+    "FK lead to win%": ("fk_wr", 1, 0.0, "first_kills"), 
+    "T FK / Round": ("t_fk", 3, 0.0, "rounds"), 
+    "T FK win%": ("t_fk_wr", 1, 0.0, "t_fk"), 
+    "CT FK / Round": ("ct_fk", 3, 0.0, "rounds"), 
+    "CT FK win%": ("ct_fk_wr", 1, 0.0, "ct_fk"), 
+    "First Deaths / Round": ("first_deaths", 3, 0.0, "rounds"), 
+    "FD lead to loss%": ("fd_lr", 1, 0.0, "first_deaths"), 
+    "T FDs / Round": ("t_fd", 3, 0.0, "rounds"), 
+    "T FD loss%": ("t_fd_lr", 1, 0.0, "t_fd"), 
+    "CT FDs / Round": ("ct_fd", 3, 0.0, "rounds"), 
+    "CT FK loss%": ("ct_fd_lr", 1, 0.0, "ct_fd"), 
 }
 
 UTILITY_FIELDS = {
-    "Util thrown": ("total_util", "{}", 0, None), 
-    "HE's thrown": ("hegrenade", "{}", 0, None), 
-    "Flashbangs thrown": ("flashbang", "{}", 0, None), 
-    "Smokes thrown": ("smokegrenade", "{}", 0, None), 
-    "Molotovs thrown": ("molotov", "{}", 0, None), 
-    "Incendinarys thrown": ("incgrenade", "{}", 0, None), 
-    "Utility Damage": ("ud", "{}", 0, None), 
-    "Fire grenade damage": ("fire_damage", "{}", 0, None), 
-    "HE Damage": ("he_damage", "{}", 0, None), 
+    "Util thrown": ("total_util", 0, 0, None), 
+    "HE's thrown": ("hegrenade", 0, 0, None), 
+    "Flashbangs thrown": ("flashbang", 0, 0, None), 
+    "Smokes thrown": ("smokegrenade", 0, 0, None), 
+    "Molotovs thrown": ("molotov", 0, 0, None), 
+    "Incendinarys thrown": ("incgrenade", 0, 0, None), 
+    "Utility Damage": ("ud", 0, 0, None), 
+    "Fire grenade damage": ("fire_damage", 0, 0, None), 
+    "HE Damage": ("he_damage", 0, 0, None), 
 }
 
 TAB_CONFIGS = {
@@ -107,25 +107,30 @@ def make_table_from_fields(stats_data, fields_dict):
         row = {}
         row["name"] = player.get("name", "")
         row["team_name"] = player.get("team_name", "")
-        for col_name, (key, fmt, default, base_key) in fields_dict.items():
+        
+        for col_name, (key, decimals, default, base_key) in fields_dict.items():
             val = player.get(key, default)
-            
+
             if base_key:
                 base_val = player.get(base_key, None)
                 if base_val in (0, None):
                     val = 0
                 else:
                     val = val / base_val
-                    if '%' in fmt:
-                        val *= 100
-                val = round(val, 2)  # rounds vals
-            
+
+            if '%' in col_name:
+                val *= 100
+
+            # Round the value
+            if isinstance(val, (int, float)):
+                val = round(val, decimals)
+
             row[col_name] = val
+
         row["steam_id"] = player.get("steam_id", None)
         rows.append(row)
 
-    df = pd.DataFrame(rows)
-    return df
+    return pd.DataFrame(rows)
 
 if not st.user.is_logged_in:
     st.session_state.redirected = True
@@ -549,8 +554,8 @@ if st.session_state.active_tab == 'graphs' and comp_id:
                     df_filtered = df.copy()
 
                 # Rounding for display
-                df_filtered[x_axis] = df_filtered[x_axis].round(2)
-                df_filtered[y_axis] = df_filtered[y_axis].round(2)
+                df_filtered[x_axis] = df_filtered[x_axis]
+                df_filtered[y_axis] = df_filtered[y_axis]
 
                 highlight_expr = []
                 if highlight_team != "All Teams":
