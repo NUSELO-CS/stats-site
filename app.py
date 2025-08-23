@@ -1,5 +1,6 @@
 import streamlit as st
 from api import get_profile
+from tools.perms import has_access
 
 st.set_page_config(
     page_title="NUSELO",
@@ -49,6 +50,9 @@ if st.user.is_logged_in:
         user_response = get_profile(user_id, st.session_state.api_key)
         user_steam_id = user_response.get("steam_id", None)
         st.session_state["user_steam_id"] = user_steam_id
+
+        user_roles = user_response.get("roles", [])
+        st.session_state["user_roles"] = user_roles
     
 
 events_page = st.Page("pages/Events.py", title="Events", icon=":material/trophy:")
@@ -65,50 +69,33 @@ nacs_events_page = st.Page("pages/NACS_Events.py",title="NA Events",icon=":mater
 login_page = st.Page("pages/User.py", title="Log in", icon=":material/person:")
 profile_page = st.Page("pages/User.py", title="Profile", icon=":material/person:")
 
+ukic_admin_home = st.Page("ukic/admin_home.py", title = "Home", icon=":material/manage_accounts:")
+ukic_roster = st.Page("ukic/admin_roster.py", title = "Rosters", icon=":material/contacts:")
+
 if st.user.is_logged_in:
     pages = {
-    "Landing": [
-        home_page
-    ],
-    "Stats": [
-        player_page,
-        events_page,
-        matches_page
-    ],
-    "UKCS": [
-        rankings_page,
-        ukcs_events_page,
-        ukcs_database_page
-    ],
-    "NACS": [
-        nacs_events_page
-    ],
-    "User": [
-        profile_page
-    ],
+        "Landing": [home_page],
+        "Stats": [player_page, events_page, matches_page],
+        "UKCS": [rankings_page, ukcs_events_page, ukcs_database_page],
+        "NACS": [nacs_events_page],
+        "User": [profile_page],
+        "UKIC": []
     }
+    if has_access(["platform_admin", "ukic_admin"]):
+        pages["UKIC"].append(ukic_admin_home)
+        pages["UKIC"].append(ukic_roster)
 else:
     pages = {
-    "Landing": [
-        home_page
-    ],
-    "UKCS": [
-        rankings_page,
-    ],
-    "User": [
-        login_page
-    ],
-    "Unavailable": [
-        player_page,
-        events_page,
-        matches_page,
-        ukcs_events_page,
-        ukcs_database_page,
-        nacs_events_page
-    ]
+        "Log in here": [login_page],
+        "Landing": [home_page],
+        "UKCS": [rankings_page],
+        "Unavailable": [
+            player_page, events_page, matches_page,
+            ukcs_events_page, ukcs_database_page, nacs_events_page
+        ],
     }
 
-pg = st.navigation(pages, expanded=False)
+pg = st.navigation(pages, expanded=True, position="top")
 
 
 pg.run()

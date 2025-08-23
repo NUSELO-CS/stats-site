@@ -41,7 +41,16 @@ with st.container(border=True):
             namesect, steambutton = st.columns([0.4,0.6],vertical_alignment="center")
             with namesect:
                 name = st.user.get("name", "User")
-                st.markdown(f"**{name}**")
+                first_role_badge = ""
+                user_roles = st.session_state.get("user_roles", [])
+                if user_roles:
+                    first_role_badge = user_roles[0].get("badge", "")
+
+                # Display name with badge
+                if first_role_badge:
+                    st.markdown(f"**{name}** ‎ ‎  {first_role_badge}")
+                else:
+                    st.markdown(f"**{name}**")
             with steambutton:
                 if st.session_state["user_steam_id"] is None:
                     # Extract Discord user ID 

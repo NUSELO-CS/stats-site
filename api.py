@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import html
 from urllib.parse import urlparse
+from datetime import datetime
 
 def is_safe_url(url: str, allowed_domain: str) -> bool:
     try:
@@ -29,10 +30,12 @@ def _api_data_get(endpoint: str, api_key: str, params: dict = None):
             return response.json().get("data")
         elif response.status_code == 403:
             st.logout()
+            st.stop()
     except Exception as e:
         st.error(f"⚠️ Network error: {str(e)}")
     
     return None  
+
 
 def _api_db_get(endpoint: str, api_key: str, params: dict = None):
     url = f"{st.secrets['DB_BASE_URL']}{endpoint}"
@@ -42,14 +45,26 @@ def _api_db_get(endpoint: str, api_key: str, params: dict = None):
 
     try:
         response = requests.get(url, headers=headers, params=params)
+        
         if response.status_code == 200:
             return response.json().get("data")
         elif response.status_code == 403:
             st.logout()
-    except Exception as e:
-        st.error(f"⚠️ Network error: {str(e)}")
+        else:
+            try:
+                error_data = response.json()
+                message = error_data.get("message", "Unknown error")
+                code = error_data.get("status_code", response.status_code)
+            except Exception:
+                message = response.text
+                code = response.status_code
+
+            st.toast(f"⚠️ API Error {code}: {message}")
     
-    return None  
+    except requests.exceptions.RequestException as e:
+        st.toast(f"⚠️ Network error: {str(e)}")
+    
+    return None
 
 
 def get_match_data(steam_id: str, api_key: str, offset=0, limit=20):
@@ -102,6 +117,68 @@ def get_profile(user_id: str, api_key: str):
         "user_id": user_id
     }
     return _api_data_get(f"/auther/profile", st.secrets['SERVER_API_KEY'],params)
+
+
+def ukic_roster_list(api_key: str):
+    return _api_data_get(f"/v2/ukic/roster/list", api_key)
+
+def ukic_roster_get(team_id: str, api_key: str):
+    params = {
+        "team_id": team_id
+    }
+    return _api_data_get(f"/v2/ukic/roster/get", api_key, params)
+
+def submit_ukic_roster(
+    api_key: str,
+    roster_id: str,
+    captains: list,
+    players: list,
+    subs: list,
+    coach: list,
+    team_members: list,
+):
+    payload = {
+        "rosterId": roster_id,
+        "timeString": datetime.now().isoformat(sep=' ', timespec='microseconds'),
+        "captains": captains,
+        "players": players,
+        "subs": subs,
+        "coach": coach,
+        "teamMembers": team_members
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+    url = f"{st.secrets['BASE_URL']}/v2/ukic/roster/update"
+
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()  # Will raise HTTPError for non-2xx
+        return {"success": True, "data": response.json()}
+    except requests.HTTPError as e:
+        return {
+            "success": False,
+            "status_code": e.response.status_code,
+            "message": e.response.text
+        }
+    except requests.RequestException as e:
+        return {
+            "success": False,
+            "status_code": None,
+            "message": str(e)
+        }
+
+
+
+
+
+
+
+
+
+
 
 def get_ukcs_details(steam_id: str, api_key: str):
     return _api_db_get(f"/player/details?steam_id={steam_id}", api_key)
