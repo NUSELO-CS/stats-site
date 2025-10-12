@@ -71,6 +71,7 @@ profile_page = st.Page("pages/User.py", title="Profile", icon=":material/person:
 
 ukic_admin_home = st.Page("ukic/admin_home.py", title = "Home", icon=":material/manage_accounts:")
 ukic_roster = st.Page("ukic/admin_roster.py", title = "Rosters", icon=":material/contacts:")
+ukic_match = st.Page("ukic/admin_match.py", title = "Match", icon=":material/tv:")
 
 if st.user.is_logged_in:
     pages = {
@@ -84,6 +85,7 @@ if st.user.is_logged_in:
     if has_access(["platform_admin", "ukic_admin"]):
         pages["UKIC"].append(ukic_admin_home)
         pages["UKIC"].append(ukic_roster)
+        pages["UKIC"].append(ukic_match)
 else:
     pages = {
         "Log in here": [login_page],

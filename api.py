@@ -18,7 +18,7 @@ def get_allowed_domain():
     parsed = urlparse(st.secrets["BASE_URL"])
     return parsed.netloc
 
-def _api_data_get(endpoint: str, api_key: str, params: dict = None):
+def _api_data_get(endpoint: str, api_key: str, params: dict = None, logout_on_403: bool = True):
     url = f"{st.secrets['BASE_URL']}{endpoint}"
     headers = {
         "Authorization": f"Bearer {api_key}"
@@ -29,8 +29,11 @@ def _api_data_get(endpoint: str, api_key: str, params: dict = None):
         if response.status_code == 200:
             return response.json().get("data")
         elif response.status_code == 403:
-            st.logout()
-            st.stop()
+            if logout_on_403:
+                st.logout()
+                st.stop()
+            else:
+                st.toast("⚠️ API Error 403: Access forbidden (logout skipped)")
     except Exception as e:
         st.error(f"⚠️ Network error: {str(e)}")
     
@@ -50,6 +53,7 @@ def _api_db_get(endpoint: str, api_key: str, params: dict = None):
             return response.json().get("data")
         elif response.status_code == 403:
             st.logout()
+            st.stop()
         else:
             try:
                 error_data = response.json()
@@ -122,11 +126,41 @@ def get_profile(user_id: str, api_key: str):
 def ukic_roster_list(api_key: str):
     return _api_data_get(f"/v2/ukic/roster/list", api_key)
 
+def ukic_match_get(match_id: str, api_key: str):
+    params = {
+        "match_id": match_id
+    }
+    return _api_data_get(
+        f"/v2/ukic/matches/get",
+        api_key,
+        params=params,         
+        logout_on_403=False    
+    )
+
 def ukic_roster_get(team_id: str, api_key: str):
     params = {
         "team_id": team_id
     }
     return _api_data_get(f"/v2/ukic/roster/get", api_key, params)
+
+
+def ukic_match_update(team_id: str, payload: dict, api_key: str):
+    """Update UKIC roster via PUT."""
+    url = f"{st.secrets['BASE_URL']}/v2/ukic/matches/update"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    # Merge team_id into payload
+    data = {"team_id": team_id, **payload}
+
+    response = requests.put(url, json=data, headers=headers)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"PUT {url} failed: {response.status_code} - {response.text}")
 
 def submit_ukic_roster(
     api_key: str,
