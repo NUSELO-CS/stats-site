@@ -18,7 +18,7 @@ BOX_FIELDS = {
     "KAST": ("kast", 2, 0.0, None),
     "K-D": ("kd", 0, 0, None), 
     "KDR": ("kdr", 2, 0.0, None),
-    "HS%": ("hs", 1, 0.0, "kills"),
+    "HS%": ("hs", 1, 0.0, None),
 }
 
 EXTENDED_KILL_FIELDS = {
