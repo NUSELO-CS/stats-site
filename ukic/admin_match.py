@@ -37,6 +37,11 @@ def build_player_item(nickname, existing_players):
 
 def render_team_editor(team, max_subs):
     st.subheader(f"Edit {team['name']}")
+    st.checkbox(
+        "Debug Mode",
+        value=st.session_state.match_debug_mode,
+        key="match_debug_mode"
+    )
 
     #Players
     roster = team.get("roster", [])
@@ -114,7 +119,8 @@ def render_team_editor(team, max_subs):
                     if key.startswith(("faction1_", "faction2_", "spectator_", "subs_", "coach_")):
                         del st.session_state[key]
                     st.session_state.editing_team = None
-                st.rerun()
+                if not st.session_state.match_debug_mode:
+                    st.rerun()
             except Exception as e:
                 st.error(f"❌ Failed to save: {e}")
 
@@ -185,6 +191,8 @@ if match_id:
                     # Edit
                     if st.button(f"Edit {team['name']}", key=f"edit_{team['team_id']}"):
                         st.session_state.editing_team = team["team_id"]
+                        st.rerun()  
+
 
                     if st.session_state.get("editing_team") == team["team_id"]:
                         render_team_editor(team, max_subs)

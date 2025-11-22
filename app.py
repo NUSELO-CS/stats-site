@@ -35,7 +35,9 @@ for key, default in {
     'user_steam_id': None,
     'redirected': "",
     'db_steam_id': "",
-    'db_searching': True
+    'db_searching': True,
+    'db_searching': True,
+    'match_debug_mode': False
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
