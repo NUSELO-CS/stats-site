@@ -87,9 +87,9 @@ if steam_id and steam_id != st.session_state.current_steam_id:
 # --- API Key Check and create buttons for tabs, incorporate more future use Matches schema ---
 if steam_id and st.session_state.api_key:
     col1, col2 = st.columns(2)
-    if col1.button("Matches", use_container_width=True):
+    if col1.button("Matches", width='stretch'):
         st.session_state.active_tab = 'matches'
-    if col2.button("Stats", use_container_width=True):
+    if col2.button("Stats", width='stretch'):
         st.session_state.active_tab = 'stats'
 
 if steam_id and not st.session_state.api_key:
@@ -155,7 +155,7 @@ if st.session_state.active_tab == 'matches' and steam_id:
             df = df.applymap(str)
 
             # --- Render Table ---
-            event = st.dataframe(df[display_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+            event = st.dataframe(df[display_columns], width='stretch', hide_index=True, on_select="rerun", selection_mode="single-row")
             # Select a match row to jump to that match page
             if event.selection and event.selection.rows:
                 selected_row_index = event.selection.rows[0]
@@ -207,7 +207,7 @@ if st.session_state.active_tab == 'matches' and steam_id:
                         comp_df[col] = None 
                 comp_df = comp_df.applymap(str)
 
-                comp_clicker = st.dataframe(comp_df[comp_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+                comp_clicker = st.dataframe(comp_df[comp_columns], width='stretch', hide_index=True, on_select="rerun", selection_mode="single-row")
 
                 if comp_clicker.selection and comp_clicker.selection.rows:
                     comp_row_index = comp_clicker.selection.rows[0]
@@ -217,7 +217,7 @@ if st.session_state.active_tab == 'matches' and steam_id:
 
             # --- Chart ---
             avg_rating_chart = create_avg_rating_chart(df)
-            st.altair_chart(avg_rating_chart, use_container_width=True)
+            st.altair_chart(avg_rating_chart, width='stretch')
         else:
             st.info("ℹ️ No comp data loaded yet.")
     
@@ -269,46 +269,46 @@ elif st.session_state.active_tab == 'stats':
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.altair_chart(charts['kills'], use_container_width=True)
+            st.altair_chart(charts['kills'], width='stretch')
 
         with col2:
-            st.altair_chart(charts['assists'], use_container_width=True)
+            st.altair_chart(charts['assists'], width='stretch')
 
         with col3:
-            st.altair_chart(charts['deaths'], use_container_width=True)
+            st.altair_chart(charts['deaths'], width='stretch')
 
         col4, col5, col6 = st.columns(3)
 
         with col4:
-            st.altair_chart(charts['kd'], use_container_width=True)
+            st.altair_chart(charts['kd'], width='stretch')
 
         with col5:
-            st.altair_chart(charts['kdr'], use_container_width=True)
+            st.altair_chart(charts['kdr'], width='stretch')
 
         with col6:
-            st.altair_chart(charts['kpr'], use_container_width=True)
+            st.altair_chart(charts['kpr'], width='stretch')
 
         col7, col8, col9 = st.columns(3)
 
         with col7:
-            st.altair_chart(charts['adr'], use_container_width=True)
+            st.altair_chart(charts['adr'], width='stretch')
 
         with col8:
-            st.altair_chart(charts['kast'], use_container_width=True)
+            st.altair_chart(charts['kast'], width='stretch')
 
         with col9:
-            st.altair_chart(charts['multi_kills'], use_container_width=True)
+            st.altair_chart(charts['multi_kills'], width='stretch')
 
         col10, col11, col12 = st.columns(3)
 
         with col10:
-            st.altair_chart(charts['rating'], use_container_width=True)
+            st.altair_chart(charts['rating'], width='stretch')
 
         with col11:
-            st.altair_chart(charts['t_rating'], use_container_width=True)
+            st.altair_chart(charts['t_rating'], width='stretch')
 
         with col12:
-            st.altair_chart(charts['ct_rating'], use_container_width=True)
+            st.altair_chart(charts['ct_rating'], width='stretch')
 
     else:
         st.error("❌ Failed to load player stats.")

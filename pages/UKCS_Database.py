@@ -40,7 +40,7 @@ if st.session_state.db_searching == True:
         advanced = st.toggle("Advanced")
 else:
     with top_cols[1]:
-        if st.button("Return",use_container_width=True):
+        if st.button("Return",width='stretch'):
             st.session_state.active_tab = "events"
             st.session_state.player_db_data = None
             st.session_state.db_name = ""
@@ -117,7 +117,7 @@ if st.session_state.api_key and st.session_state.db_searching == True:
                 if player_idx < len(row_players):
                     player = row_players[player_idx]
                     with cols[j]:
-                        if st.button(player["name"], key=player["steam_id"], use_container_width=True):
+                        if st.button(player["name"], key=player["steam_id"], width='stretch'):
                             st.session_state.db_steam_id = player['steam_id'] 
                             st.session_state.player_db_data = None
                             st.session_state.db_name = ""
@@ -134,11 +134,11 @@ if st.session_state.api_key and st.session_state.db_searching == True:
 if steam_id and st.session_state.api_key and st.session_state.db_searching == False:
     st.query_params.steam_id = steam_id
     col1, col2, col3 = st.columns(3)
-    if col1.button("Events", use_container_width=True):
+    if col1.button("Events", width='stretch'):
         st.session_state.active_tab = 'events'
-    if col2.button("ESEA", use_container_width=True):
+    if col2.button("ESEA", width='stretch'):
         st.session_state.active_tab = 'esea'
-    if col3.button("UKIC", use_container_width=True):
+    if col3.button("UKIC", width='stretch'):
         st.session_state.active_tab = 'ukic'
 
 if st.session_state.active_tab == 'events' and st.session_state.api_key and steam_id and st.session_state.player_db_data and st.session_state.db_searching == False:

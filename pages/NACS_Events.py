@@ -39,7 +39,7 @@ for organizer, organizer_events in grouped_events.items():
                 start = format_date(event['earliest_date'])
                 end = format_date(event['latest_date'])
                 st.caption(f"{start} → {end}")
-                if st.button(label="View Event", use_container_width=False, key=f"view_{event['id']}"):
+                if st.button(label="View Event", width='content', key=f"view_{event['id']}"):
                     st.session_state.selected_comp_id = event["id"]
                     st.switch_page("pages/Events.py")
 

@@ -81,7 +81,7 @@ with st.container(border=True):
                 st.logout()
     else:
         with col2:
-            if st.button("Log in", use_container_width=True):
+            if st.button("Log in", width='stretch'):
                 st.login("provider") 
 
 if st.user.is_logged_in and st.session_state.user_steam_id:
@@ -141,7 +141,7 @@ if st.user.is_logged_in and st.session_state.user_steam_id:
             df = df.applymap(str)
 
             # --- Render Table ---
-            event = st.dataframe(df[display_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+            event = st.dataframe(df[display_columns], width='stretch', hide_index=True, on_select="rerun", selection_mode="single-row")
             # Select a match row to jump to that match page
             if event.selection and event.selection.rows:
                 selected_row_index = event.selection.rows[0]
@@ -193,7 +193,7 @@ if st.user.is_logged_in and st.session_state.user_steam_id:
                         comp_df[col] = None 
                 comp_df = comp_df.applymap(str)
 
-                comp_clicker = st.dataframe(comp_df[comp_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+                comp_clicker = st.dataframe(comp_df[comp_columns], width='stretch', hide_index=True, on_select="rerun", selection_mode="single-row")
 
                 if comp_clicker.selection and comp_clicker.selection.rows:
                     comp_row_index = comp_clicker.selection.rows[0]

@@ -92,7 +92,7 @@ def render_team_editor(team, max_subs):
 
     #save
     with st.form(f"form_{team['team_id']}"):
-        submitted = st.form_submit_button("💾 Save Changes", use_container_width=True)
+        submitted = st.form_submit_button("💾 Save Changes", width='stretch')
         if submitted:
             existing_players = team.get("roster", []) + team.get("substitutes", []) + team.get("coaches", [])
 

@@ -123,7 +123,7 @@ def update_match_id():
 
 def display_team_table(team_name, team_score, df):
     st.subheader(f"{team_name} - {team_score}")
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width='stretch', hide_index=True)
 
 def build_team_df(team_data, fields, sort_by=None, ascending=False):
     try:
@@ -256,7 +256,7 @@ if match_id and match_id != st.session_state.selected_match_id:
 if match_id and st.session_state.api_key:
     cols = st.columns(len(TAB_CONFIGS))
     for i, (key, config) in enumerate(TAB_CONFIGS.items()):
-        if cols[i].button(config["label"], use_container_width=True):
+        if cols[i].button(config["label"], width='stretch'):
             st.session_state.active_tab = key
 
 if match_id and not st.session_state.api_key:
@@ -323,10 +323,10 @@ if active == "box-stats" and match_id:
             with score1:
                 st.markdown(f"### {team_a_name} - {team_a_score}")
             with score2:
-                with st.popover(f"{team_a_name} Scores",use_container_width=True):
+                with st.popover(f"{team_a_name} Scores",width='stretch'):
                     st.markdown(team_a_score_md)
 
-            team1 = st.dataframe(df_team_a_full[df_team_a_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+            team1 = st.dataframe(df_team_a_full[df_team_a_columns], width='stretch', hide_index=True, on_select="rerun", selection_mode="single-row")
 
             if team1.selection and team1.selection.rows:
                 selected_row_index = team1.selection.rows[0]
@@ -339,10 +339,10 @@ if active == "box-stats" and match_id:
             with score3:
                 st.markdown(f"### {team_b_name} - {team_b_score}")
             with score4:
-                with st.popover(f"{team_b_name} Scores",use_container_width=True):
+                with st.popover(f"{team_b_name} Scores",width='stretch'):
                     st.markdown(team_b_score_md)
 
-            team2 = st.dataframe(df_team_b_full[df_team_b_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+            team2 = st.dataframe(df_team_b_full[df_team_b_columns], width='stretch', hide_index=True, on_select="rerun", selection_mode="single-row")
 
             if team2.selection and team2.selection.rows:
                 selected_row_index = team2.selection.rows[0]
@@ -369,7 +369,7 @@ if active == "box-stats" and match_id:
                 st.markdown(veto_output)
             
             with extra_details2:
-                if st.button(label=f"Return to {comp_name}",use_container_width=True):
+                if st.button(label=f"Return to {comp_name}",width='stretch'):
                     st.session_state.selected_comp_id = comp_id
                     st.switch_page("pages/Events.py")
         else:
@@ -439,7 +439,7 @@ elif active == "comparison" and match_id:
             tooltip=["Player", "Team", alt.Tooltip("Value", format=".2f")]
         )
         .properties(height=500),
-        use_container_width=True
+        width='stretch'
     )
 
 

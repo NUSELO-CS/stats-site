@@ -212,13 +212,13 @@ if comp_id and comp_id != st.session_state.selected_comp_id:
 
 if comp_id and st.session_state.api_key:
     col1, col2, col3, col4 = st.columns(4)
-    if col1.button("Summary", use_container_width=True):
+    if col1.button("Summary", width='stretch'):
         st.session_state.active_tab = 'summary'
-    if col2.button("Players", use_container_width=True):
+    if col2.button("Players", width='stretch'):
         st.session_state.active_tab = 'players'
-    if col3.button("Matches", use_container_width=True):
+    if col3.button("Matches", width='stretch'):
         st.session_state.active_tab = 'matches'
-    if col4.button("Graphs", use_container_width=True):
+    if col4.button("Graphs", width='stretch'):
         st.session_state.active_tab = 'graphs'
 
 if comp_id and not st.session_state.api_key:
@@ -313,7 +313,7 @@ if st.session_state.active_tab == 'summary' and comp_id:
 
             with box1:
                 st.subheader("Top Match Performances")
-                tp_event = st.dataframe(top_performance_df[tp_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+                tp_event = st.dataframe(top_performance_df[tp_columns], width='stretch', hide_index=True, on_select="rerun", selection_mode="single-row")
 
                 if tp_event.selection and tp_event.selection.rows:
                     selected_row_index = tp_event.selection.rows[0]
@@ -323,7 +323,7 @@ if st.session_state.active_tab == 'summary' and comp_id:
 
             with box2:
                 st.subheader("Top Players")
-                pdf_event = st.dataframe(top_players_df[pdf_columns], use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
+                pdf_event = st.dataframe(top_players_df[pdf_columns], width='stretch', hide_index=True, on_select="rerun", selection_mode="single-row")
 
                 if pdf_event.selection and pdf_event.selection.rows:
                     selected_row_index = pdf_event.selection.rows[0]
@@ -373,7 +373,7 @@ if st.session_state.active_tab == 'summary' and comp_id:
         # Display chart so it fits on screen, need to check what happens on othe res
         chartbox, empty = st.columns([0.12,0.88])
         with chartbox:
-            st.altair_chart(chart,use_container_width=True)
+            st.altair_chart(chart,width='stretch')
 
 
 
@@ -407,7 +407,7 @@ if st.session_state.active_tab == 'players' and comp_id:
             # Filter based on selected team ---- potentially add multiple teams at once in future?
             if selected_team != "All Teams":
                 filtered_df = df[df['Team'] == selected_team].reset_index(drop=True)
-                height_val = None 
+                height_val = 'stretch' 
             else:
                 filtered_df = df
                 height_val = 600  
@@ -425,7 +425,7 @@ if st.session_state.active_tab == 'players' and comp_id:
 
             table_event = st.dataframe(
                 filtered_df[display_cols],
-                use_container_width=True,
+                width='stretch',
                 hide_index=True,
                 on_select="rerun",
                 selection_mode="single-row",
@@ -479,7 +479,7 @@ if st.session_state.active_tab == 'matches' and comp_id:
             st.subheader("Matches")
             event = st.dataframe(
                 df,
-                use_container_width=True,
+                width='stretch',
                 hide_index=True,
                 on_select="rerun",
                 selection_mode="single-row",
@@ -630,7 +630,7 @@ if st.session_state.active_tab == 'graphs' and comp_id:
 
                     chart = chart + avg_lines + avg_lines_y
 
-                st.altair_chart(chart, use_container_width=True)
+                st.altair_chart(chart, width='stretch')
 
     except Exception as e:
         st.error(f"Failed to load graph stats:")
